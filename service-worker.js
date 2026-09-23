@@ -1,15 +1,14 @@
-/* ===== Service Worker - طريق الهدى + OneSignal ===== */
+/* ===== Service Worker - طريق الهدى + Firebase Cloud Messaging ===== */
 
-importScripts('https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.sw.js');
-
-const CACHE_NAME = 'tariq-alhuda-v3.0.0';
-const RUNTIME_CACHE = 'tariq-alhuda-runtime-v3.0';
+const CACHE_NAME = 'tariq-alhuda-v4.0.0';
+const RUNTIME_CACHE = 'tariq-alhuda-runtime-v4.0';
 
 const CORE_ASSETS = [
   './',
   './index.html',
   './dashboard.html',
   './manifest.json',
+  './firebase-messaging-sw.js',
   // CSS
   './css/global.css',
   './css/landing.css',
@@ -53,7 +52,6 @@ const CORE_ASSETS = [
   './js/friends.js',
   './js/pwa.js',
   './js/landing.js',
-  // جديد
   './js/indexeddb.js',
   './js/analytics.js',
   // Data
@@ -65,7 +63,7 @@ const CORE_ASSETS = [
 
 /* ===== تثبيت ===== */
 self.addEventListener('install', (event) => {
-  console.log('[SW] Installing v3.0.0...');
+  console.log('[SW] Installing v4.0.0...');
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
@@ -80,7 +78,7 @@ self.addEventListener('install', (event) => {
 
 /* ===== تنشيط ===== */
 self.addEventListener('activate', (event) => {
-  console.log('[SW] Activating v3.0.0...');
+  console.log('[SW] Activating v4.0.0...');
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
@@ -105,11 +103,8 @@ self.addEventListener('fetch', (event) => {
   /* تجاهل الإضافات */
   if (url.protocol === 'chrome-extension:') return;
 
-  /* OneSignal — تجاهل كامل */
-  if (url.hostname === 'onesignal.com' ||
-      url.hostname === 'www.onesignal.com' ||
-      url.hostname.endsWith('.onesignal.com')) {
-    console.log('[SW] Bypassing OneSignal request:', url.pathname);
+  /* firebase-messaging-sw.js — لا نعترضه */
+  if (url.pathname === '/firebase-messaging-sw.js') {
     return;
   }
 
@@ -123,12 +118,6 @@ self.addEventListener('fetch', (event) => {
       url.hostname.includes('firebaseio.com') ||
       url.hostname.includes('googleapis.com') ||
       url.hostname.includes('gstatic.com')) {
-    event.respondWith(networkFirst(request));
-    return;
-  }
-
-  /* Netlify Functions — network-first */
-  if (url.pathname.startsWith('/api/') || url.pathname.startsWith('/.netlify/')) {
     event.respondWith(networkFirst(request));
     return;
   }
@@ -237,7 +226,8 @@ self.addEventListener('message', (event) => {
 });
 
 /* ============================================
-   OneSignal Notification Click Handler
+   Notification Click Handler
+   يعمل مع FCM Service Worker
    ============================================ */
 self.addEventListener('notificationclick', (event) => {
   console.log('[SW] Notification clicked:', event.notification);
@@ -245,7 +235,7 @@ self.addEventListener('notificationclick', (event) => {
   event.notification.close();
 
   const data = event.notification.data || {};
-  const urlToOpen = data.url || '/dashboard.html#friends';
+  const urlToOpen = data.url || data.link || '/dashboard.html#friends';
 
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true })
@@ -272,7 +262,8 @@ self.addEventListener('notificationclick', (event) => {
 });
 
 /* ============================================
-   Web Push Handler (Firebase Cloud Messaging)
+   Web Push Handler (احتياطي)
+   ملاحظة: FCM الرئيسي يعمل عبر firebase-messaging-sw.js
    ============================================ */
 self.addEventListener('push', (event) => {
   console.log('[SW] Push received!');

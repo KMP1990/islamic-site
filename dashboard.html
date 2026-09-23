@@ -15,21 +15,7 @@
   <meta name="application-name" content="طريق الهدى" />
   <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='80' fill='%230d3b2e'/%3E%3Ctext x='256' y='340' font-size='280' text-anchor='middle' fill='%23d4af37' font-family='serif'%3E﷽%3C/text%3E%3C/svg%3E" />
 
-  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-  <script>
-    const oneSignalOrigin = 'https://dynamic-cactus-a5fb04.netlify.app';
-    window.OneSignalDeferred = window.OneSignalDeferred || [];
-    OneSignalDeferred.push(async function(OneSignal) {
-      if (window.location.origin !== oneSignalOrigin) return;
-      await OneSignal.init({
-        appId: "a666e4cb-b2ed-49aa-8dd9-46f0cf962e3a",
-        serviceWorkerPath: "service-worker.js",
-        serviceWorkerParam: { scope: "/" },
-        notifyButton: { enable: false },
-        allowLocalhostAsSecureOrigin: true,
-      });
-    });
-  </script>
+
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

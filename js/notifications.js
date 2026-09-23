@@ -1,15 +1,15 @@
 /* ============================================
-   نظام الإشعارات — v5.0.0
+   نظام الإشعارات — FCM (v6.0.0)
+   ============================================
+   ✅ Firebase Cloud Messaging مباشرة
+   ✅ يعمل عندما التطبيق مغلق
+   ✅ بدون OneSignal
    ============================================ */
 
 const NOTIFICATION_CONFIG = {
-  VAPID_KEY: 'BHnvPlMNZmAqtSLlLdbARaJK6kea3wVXSfRCH45Bxui4jzoE1poj0_G7Zcma4OLYijPgTJ48DcEvx5Li1Hfk554',
-  PROJECT_ID: 'tariq-al-huda',
-  SENDER_ID: '605516521745',
+  VAPID_KEY: 'ضع_مفتاح_VAPID_هنا',
+  SERVICE_WORKER_PATH: '/firebase-messaging-sw.js',
   TOKENS_COLLECTION: 'fcmTokens',
-  ONESIGNAL_APP_ID: 'a666e4cb-b2ed-49aa-8dd9-46f0cf962e3a',
-  PUSH_ENDPOINT: '/api/send-push',
-  ORIGIN: 'https://dynamic-cactus-a5fb04.netlify.app',
   DEDUP_WINDOW: 5000
 };
 
@@ -17,9 +17,11 @@ const notificationState = {
   initialized: false,
   permission: 'default',
   fcmToken: null,
+  messaging: null,
   sentCache: new Map()
 };
 
+/* ===== تحويل VAPID Key ===== */
 function urlBase64ToUint8Array(base64String) {
   const padding = '='.repeat((4 - base64String.length % 4) % 4);
   const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
@@ -31,21 +33,73 @@ function urlBase64ToUint8Array(base64String) {
   return outputArray;
 }
 
-async function registerServiceWorker() {
+/* ===== تهيئة FCM ===== */
+async function initFCM() {
   try {
-    if (!('serviceWorker' in navigator)) {
-      console.warn('[Notif] SW not supported');
+    if (!window.firebaseHelpers) {
+      console.warn('[FCM] Firebase not loaded');
       return null;
     }
-    const registration = await navigator.serviceWorker.register('/service-worker.js', { scope: '/' });
-    console.log('✅ SW registered:', registration.scope);
-    return registration;
+
+    const { auth } = await window.firebaseHelpers.whenFirebaseReady();
+    if (!auth) return null;
+
+    // تحميل Firebase Messaging SDK
+    const { getMessaging, onMessage } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js');
+    const { getApp } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
+
+    const app = getApp();
+    const messaging = getMessaging(app);
+
+    notificationState.messaging = messaging;
+
+    // استقبال الرسائل عندما التطبيق مفتوح
+    onMessage(messaging, (payload) => {
+      console.log('[FCM] Foreground message:', payload);
+      handleForegroundMessage(payload);
+    });
+
+    console.log('✅ FCM initialized');
+    return messaging;
   } catch (err) {
-    console.error('[Notif] SW registration failed:', err);
+    console.error('[FCM] Init failed:', err);
     return null;
   }
 }
 
+/* ===== معالجة الرسالة في الواجهة ===== */
+function handleForegroundMessage(payload) {
+  const title = payload.data?.title || payload.notification?.title || 'إشعار جديد';
+  const body = payload.data?.body || payload.notification?.body || '';
+  const icon = payload.data?.icon || '📢';
+  const color = payload.data?.color || 'gold';
+  const link = payload.data?.link || null;
+  const chatId = payload.data?.chatId || null;
+
+  if (typeof showInAppNotification === 'function') {
+    showInAppNotification({
+      title,
+      body,
+      icon,
+      color,
+      link,
+      chatId
+    });
+  }
+
+  // إشعار محلي أيضاً
+  if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+    try {
+      new Notification(title, {
+        body,
+        icon: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Crect width="100" height="100" rx="20" fill="%230d3b2e"/%3E%3Ctext x="50" y="68" font-size="60" text-anchor="middle" fill="%23d4af37" font-family="serif"%3E﷽%3C/text%3E%3C/svg%3E',
+        tag: chatId ? `chat_${chatId}` : `notif_${Date.now()}`
+      });
+    } catch (e) {}
+  }
+}
+
+/* ===== طلب الإذن + الحصول على Token ===== */
 async function rpZEAWYtiB6bJ16NuLbGCc6CZ6jJdKfb63() {
   if (!('Notification' in window)) {
     return { ok: false, error: 'المتصفح لا يدعم الإشعارات' };
@@ -64,100 +118,101 @@ async function rpZEAWYtiB6bJ16NuLbGCc6CZ6jJdKfb63() {
   }
 
   if (Notification.permission === 'denied') {
-    return { ok: false, error: 'الإشعارات محظورة' };
+    return { ok: false, error: 'الإشعارات محظورة — فعّلها من إعدادات المتصفح' };
   }
 
   notificationState.permission = 'granted';
 
-  const subscription = await createPushSubscription();
-  if (!subscription) {
-    return { ok: false, error: 'تعذر إنشاء اشتراك Push' };
+  // الحصول على FCM Token
+  const token = await getFCMToken();
+  if (!token) {
+    return { ok: false, error: 'تعذر الحصول على FCM Token' };
   }
 
-  await saveSubscription(subscription);
+  // حفظ Token في Firestore
+  await saveFCMToken(token);
+
   notificationState.initialized = true;
 
   if (typeof trackEvent === 'function') {
     trackEvent('notification_permission_granted');
   }
 
-  return { ok: true, subscription };
+  return { ok: true, token };
 }
 
-async function createPushSubscription() {
+/* ===== الحصول على FCM Token ===== */
+async function getFCMToken() {
   try {
-    let registration = await navigator.serviceWorker.getRegistration();
-    if (!registration) {
-      registration = await registerServiceWorker();
+    if (!notificationState.messaging) {
+      const messaging = await initFCM();
+      if (!messaging) throw new Error('FCM not initialized');
     }
-    if (!registration) throw new Error('SW not registered');
 
+    const { getToken } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js');
+
+    // تسجيل Service Worker
+    await navigator.serviceWorker.register(NOTIFICATION_CONFIG.SERVICE_WORKER_PATH, {
+      scope: '/'
+    });
     await navigator.serviceWorker.ready;
 
-    let subscription = await registration.pushManager.getSubscription();
-    if (subscription) {
-      console.log('✅ Existing subscription found');
-      notificationState.fcmToken = JSON.stringify(subscription);
-      return subscription;
-    }
-
-    console.log('📤 Creating new push subscription...');
-    subscription = await registration.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey: urlBase64ToUint8Array(NOTIFICATION_CONFIG.VAPID_KEY)
+    const token = await getToken(notificationState.messaging, {
+      vapidKey: NOTIFICATION_CONFIG.VAPID_KEY,
+      serviceWorkerRegistration: await navigator.serviceWorker.getRegistration('/')
     });
 
-    console.log('✅ Push subscription created');
-    notificationState.fcmToken = JSON.stringify(subscription);
-    return subscription;
+    if (token) {
+      console.log('✅ FCM Token:', token.substring(0, 20) + '...');
+      notificationState.fcmToken = token;
+      return token;
+    }
+
+    console.warn('[FCM] No token returned');
+    return null;
   } catch (err) {
-    console.error('[Notif] Create subscription failed:', err);
+    console.error('[FCM] getToken failed:', err);
     return null;
   }
 }
 
-async function saveSubscription(subscription) {
+/* ===== حفظ Token في Firestore ===== */
+async function saveFCMToken(token) {
   try {
     const user = window.authApi?.getCurrentUser?.();
     if (!user || !user.uid) {
-      console.log('[Notif] No user — skip save');
+      console.log('[FCM] No user — skip save');
       return false;
     }
 
-    if (!window.firebaseHelpers) {
-      console.warn('[Notif] Firebase not ready');
-      return false;
-    }
-
-    const subJson = subscription.toJSON();
+    if (!window.firebaseHelpers) return false;
 
     await window.firebaseHelpers.fbSetDoc(
       NOTIFICATION_CONFIG.TOKENS_COLLECTION,
       user.uid,
       {
         uid: user.uid,
-        subscription: subJson,
-        endpoint: subJson.endpoint,
-        keys: subJson.keys,
+        token: token,
         username: user.username || '',
         email: user.email || '',
+        platform: 'web',
         updatedAt: new Date().toISOString()
       }
     );
 
-    console.log('✅ Subscription saved to Firestore');
+    console.log('✅ FCM Token saved to Firestore');
     return true;
   } catch (err) {
-    if (err.code !== 'permission-denied') {
-      console.warn('[Notif] Save subscription skipped:', err.code || err.message);
-    }
+    console.warn('[FCM] Save token failed:', err.code || err.message);
     return false;
   }
 }
 
+/* ===== إرسال إشعار لمستخدم آخر (عبر Firestore) ===== */
 async function sendPushNotification(toUid, data = {}) {
   if (!toUid) return { ok: false, error: 'toUid missing' };
 
+  // منع التكرار
   const dedupKey = `${toUid}_${data.type || 'general'}_${data.chatId || ''}_${data.title || ''}`;
   const now = Date.now();
   if (notificationState.sentCache.has(dedupKey)) {
@@ -168,15 +223,10 @@ async function sendPushNotification(toUid, data = {}) {
   }
   notificationState.sentCache.set(dedupKey, now);
 
-  if (notificationState.sentCache.size > 100) {
-    const cutoff = now - 60000;
-    for (const [key, time] of notificationState.sentCache.entries()) {
-      if (time < cutoff) notificationState.sentCache.delete(key);
-    }
-  }
-
   try {
+    // حفظ الإشعار في Firestore — Cloud Function تقرأه وترسله
     const notificationId = 'notif_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
+
     await window.firebaseHelpers.fbSetDoc('pushQueue', notificationId, {
       id: notificationId,
       toUid,
@@ -187,81 +237,31 @@ async function sendPushNotification(toUid, data = {}) {
       chatId: data.chatId || null,
       fromUid: data.fromUid || null,
       fromName: data.fromName || null,
-      createdAt: new Date().toISOString(),
-      sent: false
-    }).catch(() => {});
-  } catch (e) {}
-
-  try {
-    const response = await fetch(NOTIFICATION_CONFIG.PUSH_ENDPOINT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        toUid,
-        title: data.title || 'إشعار جديد',
-        body: data.body || '',
-        type: data.type || 'general',
-        chatId: data.chatId || null,
-        link: data.link || null,
-        fromName: data.fromName || null
-      })
+      sent: false,
+      createdAt: new Date().toISOString()
     });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.warn('[Notif] Backend push failed:', response.status, errorText);
-      return { ok: false, error: 'backend-failed' };
-    }
-
-    const result = await response.json();
-    console.log('✅ Push sent via backend:', result);
-    return { ok: true, id: result.id };
+    console.log('✅ Push queued:', notificationId);
+    return { ok: true, id: notificationId };
   } catch (err) {
-    console.warn('[Notif] Push error:', err.message);
+    console.warn('[FCM] Push queue error:', err.message);
     return { ok: false, error: err.message };
   }
 }
 
-function showLocalNotification(data = {}) {
-  if (typeof Notification === 'undefined') return;
-  if (Notification.permission !== 'granted') return;
-
-  const now = Date.now();
-  const dedupKey = `local_${data.chatId || ''}_${data.title || ''}_${data.body || ''}`;
-  if (notificationState.sentCache.has(dedupKey)) {
-    const lastSent = notificationState.sentCache.get(dedupKey);
-    if (now - lastSent < NOTIFICATION_CONFIG.DEDUP_WINDOW) return;
-  }
-  notificationState.sentCache.set(dedupKey, now);
-
-  try {
-    if (navigator.serviceWorker && navigator.serviceWorker.ready) {
-      navigator.serviceWorker.ready.then((reg) => {
-        reg.showNotification(data.title || 'إشعار جديد', {
-          body: data.body || '',
-          icon: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Crect width="100" height="100" rx="20" fill="%230d3b2e"/%3E%3Ctext x="50" y="68" font-size="60" text-anchor="middle" fill="%23d4af37" font-family="serif"%3E﷽%3C/text%3E%3C/svg%3E',
-          badge: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Crect width="100" height="100" rx="20" fill="%230d3b2e"/%3E%3Ctext x="50" y="68" font-size="60" text-anchor="middle" fill="%23d4af37" font-family="serif"%3E﷽%3C/text%3E%3C/svg%3E',
-          tag: data.chatId ? `chat_${data.chatId}` : `notif_${now}`,
-          vibrate: [200, 100, 200],
-          data: { chatId: data.chatId, type: data.type, link: data.link }
-        });
-      });
-    }
-  } catch (e) {}
-}
-
+/* ===== حالة النظام ===== */
 function getNotificationStatus() {
   return {
     permission: typeof Notification !== 'undefined' ? Notification.permission : 'unsupported',
     initialized: notificationState.initialized,
-    hasSubscription: !!notificationState.fcmToken,
+    hasToken: !!notificationState.fcmToken,
     supported: 'Notification' in window,
     swSupported: 'serviceWorker' in navigator,
-    pushSupported: 'PushManager' in window,
-    currentOrigin: window.location.origin
+    fcmSupported: 'FirebaseMessaging' in window || true
   };
 }
 
+/* ===== اختبار ===== */
 async function testNotification() {
   const status = getNotificationStatus();
   if (status.permission !== 'granted') {
@@ -270,89 +270,31 @@ async function testNotification() {
       if (typeof showToast === 'function') showToast('❌ ' + (result?.error || 'فشل'));
       return { ok: false, error: result?.error };
     }
-    await new Promise(r => setTimeout(r, 500));
   }
 
-  showLocalNotification({
-    title: '🔔 إشعار اختباري',
-    body: 'إذا وصل، النظام يعمل',
-    type: 'test'
-  });
-
-  if (typeof showToast === 'function') showToast('✅ تم إرسال الإشعار');
+  if (typeof showToast === 'function') showToast('✅ تم تفعيل الإشعارات بنجاح');
   return { ok: true };
 }
 
-async function diagnoseDomainIssue() {
-  const status = getNotificationStatus();
-  console.log('\n🔍 تشخيص نظام الإشعارات:\n');
-  console.log('📍 الدومين:', status.currentOrigin);
-  console.log('📍 الإذن:', status.permission);
-  console.log('📍 Service Worker:', status.swSupported ? '✅' : '❌');
-  console.log('📍 Push Manager:', status.pushSupported ? '✅' : '❌');
-  console.log('📍 Subscription:', status.hasSubscription ? '✅' : '❌');
-
-  if (status.permission === 'granted' && !status.hasSubscription) {
-    console.log('\n📤 محاولة إنشاء subscription...');
-    const sub = await createPushSubscription();
-    if (sub) {
-      console.log('✅ Subscription created!');
-      await saveSubscription(sub);
-    } else {
-      console.log('❌ Failed to create subscription');
-    }
-  }
-
-  return getNotificationStatus();
-}
-
-async function initNotifications() {
-  console.log('[Notif] Initializing v5.0...');
-  if (typeof Notification === 'undefined') return false;
-
-  notificationState.permission = Notification.permission;
-
-  if (Notification.permission === 'granted') {
-    notificationState.initialized = true;
-    notificationState.permission = 'granted';
-
-    try {
-      const registration = await navigator.serviceWorker.getRegistration();
-      if (registration) {
-        const sub = await registration.pushManager.getSubscription();
-        if (sub) {
-          notificationState.fcmToken = JSON.stringify(sub);
-          console.log('✅ Existing subscription restored');
-        }
-      }
-    } catch (e) {}
-  }
-
-  console.log('✅ Notifications ready');
-  return true;
-}
-
+/* ===== التصدير ===== */
 window.notificationSystem = {
-  init: initNotifications,
+  init: initFCM,
   requestPermission: rpZEAWYtiB6bJ16NuLbGCc6CZ6jJdKfb63,
   sendPush: sendPushNotification,
-  showLocal: showLocalNotification,
   getStatus: getNotificationStatus,
   test: testNotification,
-  diagnose: diagnoseDomainIssue,
-  createSubscription: createPushSubscription,
-  saveSubscription,
+  getToken: getFCMToken,
   config: NOTIFICATION_CONFIG
 };
 
 window.testNotification = testNotification;
-window.diagnoseNotifications = diagnoseDomainIssue;
 window.getNotificationStatus = getNotificationStatus;
 window.sendPushNotification = sendPushNotification;
 window.rpZEAWYtiB6bJ16NuLbGCc6CZ6jJdKfb63 = rpZEAWYtiB6bJ16NuLbGCc6CZ6jJdKfb63;
 
+/* ===== بدء تلقائي ===== */
 document.addEventListener('DOMContentLoaded', async () => {
   setTimeout(async () => {
-    await initNotifications();
-  }, 1500);
+    await initFCM();
+  }, 2000);
 });

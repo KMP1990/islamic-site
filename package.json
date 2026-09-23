@@ -1,0 +1,19 @@
+{
+  "name": "tariq-al-huda",
+  "version": "2.1.0",
+  "private": true,
+  "scripts": {
+    "lint": "eslint js/*.js tests/*.cjs && node tests/check-syntax.cjs",
+    "typecheck": "tsc --allowJs --checkJs --noEmit --strict --target ES2022 --lib ES2022,DOM js/security.js",
+    "test": "node --test tests/management.test.cjs tests/e2e.test.cjs",
+    "test:e2e": "node --test tests/e2e.test.cjs",
+    "test:all": "npm run lint && npm run typecheck && npm test",
+    "start": "python3 -m http.server 8080 --bind 0.0.0.0"
+  },
+  "devDependencies": {
+    "eslint": "9.39.1",
+    "globals": "16.5.0",
+    "jsdom": "26.1.0",
+    "typescript": "5.9.3"
+  }
+}

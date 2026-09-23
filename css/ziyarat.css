@@ -1,0 +1,293 @@
+/* ===== قسم الزيارات ===== */
+
+/* ===== قائمة الزيارات ===== */
+.ziyarat-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ziyarat-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 20px;
+  background: var(--card-bg);
+  border: 1.5px solid var(--card-border);
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+  backdrop-filter: blur(8px);
+  animation: ziyaratFadeUp 0.5s ease forwards;
+  opacity: 0;
+  transform: translateY(15px);
+}
+
+@keyframes ziyaratFadeUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.ziyarat-card:hover {
+  border-color: var(--gold);
+  background: var(--card-hover);
+  transform: translateX(-6px);
+  box-shadow: 0 8px 30px rgba(212, 175, 55, 0.25);
+}
+
+html[dir="ltr"] .ziyarat-card:hover {
+  transform: translateX(6px);
+}
+
+.ziyarat-icon {
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(212, 175, 55, 0.12);
+  border: 1.5px solid rgba(212, 175, 55, 0.4);
+  border-radius: 50%;
+  font-size: 1.6rem;
+}
+
+.ziyarat-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.ziyarat-title {
+  font-family: var(--font-ui);
+  font-size: 1.15rem;
+  color: var(--cream);
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.ziyarat-subtitle {
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  color: rgba(245, 241, 232, 0.55);
+}
+
+html[data-theme="light"] .ziyarat-subtitle {
+  color: rgba(26, 26, 26, 0.55);
+}
+
+.ziyarat-arrow {
+  color: var(--gold);
+  font-size: 1.5rem;
+  opacity: 0.5;
+  transition: all 0.3s ease;
+}
+
+.ziyarat-card:hover .ziyarat-arrow {
+  opacity: 1;
+  transform: translateX(-4px);
+}
+
+html[dir="ltr"] .ziyarat-card:hover .ziyarat-arrow {
+  transform: translateX(4px);
+}
+
+/* ===== صفحة الزيارة ===== */
+.ziyarat-view-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.25);
+  flex-wrap: wrap;
+}
+
+.ziyarat-view-title {
+  flex: 1;
+  text-align: center;
+  min-width: 0;
+}
+
+.ziyarat-view-name {
+  font-family: var(--font-ui);
+  font-size: clamp(1.4rem, 4vw, 1.9rem);
+  color: var(--gold);
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.ziyarat-view-info {
+  font-family: var(--font-ui);
+  font-size: 0.88rem;
+  color: rgba(245, 241, 232, 0.7);
+}
+
+html[data-theme="light"] .ziyarat-view-info {
+  color: rgba(26, 26, 26, 0.7);
+}
+
+/* ===== أزرار الزيارة ===== */
+.ziyarat-actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.ziyarat-action-btn {
+  flex: 1;
+  min-width: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 20px;
+  background: var(--card-bg);
+  border: 1.5px solid var(--card-border);
+  border-radius: 14px;
+  color: var(--gold);
+  cursor: pointer;
+  font-family: var(--font-ui);
+  font-size: 0.92rem;
+  font-weight: 700;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(8px);
+}
+
+.ziyarat-action-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.ziyarat-action-btn:hover {
+  background: var(--gold);
+  color: var(--green-deep);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
+}
+
+html[data-theme="dark"] .ziyarat-action-btn:hover {
+  color: #0a0a0a;
+}
+
+html[data-theme="light"] .ziyarat-action-btn:hover {
+  color: #ffffff;
+}
+
+.ziyarat-play-btn {
+  background: rgba(212, 175, 55, 0.15);
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.ziyarat-play-btn:hover {
+  background: var(--gold);
+  color: var(--green-deep);
+}
+
+.ziyarat-stop-btn {
+  background: rgba(192, 57, 43, 0.15);
+  border-color: rgba(192, 57, 43, 0.5);
+  color: #ff8a7a;
+}
+
+.ziyarat-stop-btn:hover {
+  background: #c0392b;
+  color: white;
+  border-color: #c0392b;
+}
+
+.ziyarat-copy-btn {
+  background: rgba(46, 139, 87, 0.15);
+  border-color: rgba(46, 139, 87, 0.4);
+  color: #7fe8a8;
+}
+
+.ziyarat-copy-btn:hover {
+  background: #2e8b57;
+  color: white;
+  border-color: #2e8b57;
+}
+
+/* ===== النص ===== */
+.ziyarat-text-container {
+  padding: 24px 20px;
+  background: var(--card-bg);
+  border: 1.5px solid var(--card-border);
+  border-radius: 20px;
+  backdrop-filter: blur(8px);
+  margin-bottom: 30px;
+}
+
+.ziyarat-paragraph {
+  font-family: var(--quran-font-family);
+  font-size: clamp(1.3rem, 3.5vw, 1.75rem);
+  line-height: 2.4;
+  color: var(--cream);
+  text-align: right;
+  direction: rtl;
+  margin-bottom: 20px;
+  text-align: justify;
+}
+
+html[dir="ltr"] .ziyarat-paragraph {
+  text-align: left;
+  direction: rtl;
+}
+
+.ziyarat-subheading {
+  font-family: var(--font-ui);
+  font-size: 1.05rem;
+  color: var(--gold);
+  font-weight: 700;
+  text-align: center;
+  padding: 12px;
+  margin: 24px 0 16px;
+  background: rgba(212, 175, 55, 0.08);
+  border-top: 1px solid rgba(212, 175, 55, 0.3);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 8px;
+}
+
+/* ===== استجابة الجوال ===== */
+@media (max-width: 600px) {
+  .ziyarat-card {
+    padding: 14px 16px;
+    gap: 12px;
+  }
+
+  .ziyarat-icon {
+    width: 48px;
+    height: 48px;
+    font-size: 1.4rem;
+  }
+
+  .ziyarat-title {
+    font-size: 1rem;
+  }
+
+  .ziyarat-subtitle {
+    font-size: 0.78rem;
+  }
+
+  .ziyarat-actions {
+    flex-direction: column;
+  }
+
+  .ziyarat-action-btn {
+    min-width: 100%;
+  }
+
+  .ziyarat-text-container {
+    padding: 18px 14px;
+  }
+
+  .ziyarat-paragraph {
+    font-size: 1.25rem;
+    line-height: 2.2;
+  }
+
+  .ziyarat-subheading {
+    font-size: 0.92rem;
+    padding: 10px;
+  }
+}

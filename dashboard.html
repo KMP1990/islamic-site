@@ -1,0 +1,2049 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0d3b2e" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230d3b2e'/%3E%3Ctext x='50' y='68' font-size='60' text-anchor='middle' fill='%23d4af37' font-family='serif'%3E﷽%3C/text%3E%3C/svg%3E" />
+  <title data-i18n="quran_title">طريق الهدى | القرآن الكريم</title>
+
+  <link rel="manifest" href="manifest.json" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="طريق الهدى" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="application-name" content="طريق الهدى" />
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='80' fill='%230d3b2e'/%3E%3Ctext x='256' y='340' font-size='280' text-anchor='middle' fill='%23d4af37' font-family='serif'%3E﷽%3C/text%3E%3C/svg%3E" />
+
+  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+  <script>
+    const oneSignalOrigin = 'https://dynamic-cactus-a5fb04.netlify.app';
+    window.OneSignalDeferred = window.OneSignalDeferred || [];
+    OneSignalDeferred.push(async function(OneSignal) {
+      if (window.location.origin !== oneSignalOrigin) return;
+      await OneSignal.init({
+        appId: "a666e4cb-b2ed-49aa-8dd9-46f0cf962e3a",
+        serviceWorkerPath: "service-worker.js",
+        serviceWorkerParam: { scope: "/" },
+        notifyButton: { enable: false },
+        allowLocalhostAsSecureOrigin: true,
+      });
+    });
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Amiri:wght@400;700&family=Scheherazade+New:wght@400;700&family=Noto+Naskh+Arabic:wght@400;600;700&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/global.css" />
+  <link rel="stylesheet" href="css/home.css" />
+  <link rel="stylesheet" href="css/quran.css" />
+  <link rel="stylesheet" href="css/listen.css" />
+  <link rel="stylesheet" href="css/stats.css" />
+  <link rel="stylesheet" href="css/prayer.css" />
+  <link rel="stylesheet" href="css/qibla.css" />
+  <link rel="stylesheet" href="css/names.css" />
+  <link rel="stylesheet" href="css/ziyarat.css" />
+  <link rel="stylesheet" href="css/istikhara.css" />
+  <link rel="stylesheet" href="css/pwa.css" />
+  <link rel="stylesheet" href="css/management.css" />
+  <link rel="stylesheet" href="css/features.css" />
+  <link rel="stylesheet" href="css/settings.css" />
+  <link rel="stylesheet" href="css/friends.css" />
+</head>
+<body>
+
+  <div class="theme-switcher">
+    <button class="theme-btn" id="themeBtn" onclick="toggleTheme()" aria-label="Theme">
+      <span class="theme-icon" id="themeIcon">🌙</span>
+    </button>
+  </div>
+
+  <div class="lang-switcher">
+    <div class="lang-btn">
+      <span class="lang-option" data-lang="ar" onclick="setLang('ar')">عربي</span>
+      <span class="lang-option" data-lang="en" onclick="setLang('en')">EN</span>
+      <span class="lang-slider"></span>
+    </div>
+  </div>
+
+  <button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()" aria-label="القائمة">
+    <span class="menu-line"></span>
+    <span class="menu-line"></span>
+    <span class="menu-line"></span>
+  </button>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-header-left">
+        <div class="sidebar-logo">🕌</div>
+        <div class="sidebar-header-title">
+          <h2 class="sidebar-title" data-i18n="site_name">طريق الهدى</h2>
+          <span class="sidebar-subtitle">طريقك إلى النور</span>
+        </div>
+      </div>
+      <button class="sidebar-close" onclick="toggleSidebar()" aria-label="Close">✕</button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-group-title"><span>الأقسام الرئيسية</span></div>
+
+      <a href="#" class="nav-item active" onclick="showHome(); return false;">
+        <span class="nav-icon">🏠</span>
+        <span class="nav-text">
+          <span class="nav-label" data-i18n="nav_home">الرئيسية</span>
+          <span class="nav-hint">الصفحة الرئيسية</span>
+        </span>
+        <span class="nav-arrow">‹</span>
+      </a>
+
+      <a href="#" class="nav-item" onclick="showQuran(); return false;">
+        <span class="nav-icon">📖</span>
+        <span class="nav-text">
+          <span class="nav-label" data-i18n="nav_quran">القرآن الكريم</span>
+          <span class="nav-hint">١١٤ سورة</span>
+        </span>
+        <span class="nav-arrow">‹</span>
+      </a>
+
+      <a href="#" class="nav-item" onclick="showListen(); return false;">
+        <span class="nav-icon">🎧</span>
+        <span class="nav-text">
+          <span class="nav-label" data-i18n="nav_listen">الاستماع</span>
+          <span class="nav-hint">+٢٠٠ قارئ</span>
+        </span>
+        <span class="nav-arrow">‹</span>
+      </a>
+
+      <a href="#" class="nav-item" onclick="showPrayer(); return false;">
+        <span class="nav-icon">🕌</span>
+        <span class="nav-text">
+          <span class="nav-label" data-i18n="nav_prayer">مواقيت الصلاة</span>
+          <span class="nav-hint">حسب موقعك</span>
+        </span>
+        <span class="nav-arrow">‹</span>
+      </a>
+
+      <a href="#" class="nav-item" onclick="showFriends(); return false;" style="position: relative;">
+        <span class="nav-icon">👥</span>
+        <span class="nav-text">
+          <span class="nav-label">الأصدقاء</span>
+          <span class="nav-hint">محادثات ومجموعات</span>
+        </span>
+        <span class="nav-arrow">‹</span>
+      </a>
+
+      <div class="nav-group-title"><span>القسم الروحاني</span></div>
+
+      <a href="#" class="nav-item" onclick="showQibla(); return false;">
+        <span class="nav-icon">🧭</span>
+        <span class="nav-text">
+          <span class="nav-label">القبلة</span>
+          <span class="nav-hint">اتجاه الكعبة</span>
+        </span>
+        <span class="nav-arrow">‹</span>
+      </a>
+
+      <a href="#" class="nav-item" onclick="showNames(); return false;">
+        <span class="nav-icon">✨</span>
+        <span class="nav-text">
+          <span class="nav-label">أسماء الله الحسنى</span>
+          <span class="nav-hint">٩٩ اسم</span>
+        </span>
+        <span class="nav-arrow">‹</span>
+      </a>
+
+      <a href="#" class="nav-item" onclick="showZiyarat(); return false;">
+        <span class="nav-icon">📿</span>
+        <span class="nav-text">
+          <span class="nav-label" data-i18n="nav_ziyarat">الزيارات</span>
+          <span class="nav-hint">زيارات وأدعية</span>
+        </span>
+        <span class="nav-arrow">‹</span>
+      </a>
+
+      <a href="#" class="nav-item" onclick="showIstikhara(); return false;">
+        <span class="nav-icon">🎲</span>
+        <span class="nav-text">
+          <span class="nav-label" data-i18n="nav_istikhara">الاستخارة</span>
+          <span class="nav-hint">اطلب الخير</span>
+        </span>
+        <span class="nav-arrow">‹</span>
+      </a>
+
+      <div class="nav-group-title"><span>حسابي</span></div>
+
+      <a href="#" class="nav-item" onclick="showStats(); return false;">
+        <span class="nav-icon">📊</span>
+        <span class="nav-text">
+          <span class="nav-label" data-i18n="nav_stats">إحصائياتي</span>
+          <span class="nav-hint">تقدمك الشخصي</span>
+        </span>
+        <span class="nav-arrow">‹</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-copyright">
+        <span data-i18n="made_by">صنع بواسطة</span>
+        <span class="sidebar-copyright-name">ZaidAli</span>
+      </div>
+      <button class="logout-btn" onclick="goHome()">
+        <span>🏠</span>
+        <span data-i18n="home">الصفحة الرئيسية</span>
+      </button>
+    </div>
+  </aside>
+
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+  <button class="surah-settings-btn" id="surahSettingsBtn" onclick="toggleSettings()" aria-label="إعدادات القراءة" title="إعدادات القراءة">
+    <span class="surah-settings-icon">⚙️</span>
+  </button>
+
+  <button class="global-back-btn" id="globalBackBtn" onclick="goToHomeFromAnywhere()" title="العودة للرئيسية" aria-label="العودة للرئيسية">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <path d="M3 12L12 3l9 9"/>
+      <path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10"/>
+    </svg>
+    <span>الرئيسية</span>
+  </button>
+
+  <div id="devMessagesContainer" class="dev-messages-container"></div>
+
+  <main class="main-content">
+
+    <!-- ===== الصفحة الرئيسية ===== -->
+    <section id="homeView" class="view active">
+      
+      <header class="home-header">
+        <div class="home-greeting">
+          <span class="greeting-text" data-i18n="home_welcome">أهلاً بك في</span>
+          <h1 class="home-title" data-i18n="site_name">طريق الهدى</h1>
+          <button class="home-version" type="button" title="افتح لوحة المطور" onclick="openDeveloperPanel()">v7.3 · الإدارة</button>
+        </div>
+      </header>
+
+      <div id="siteBanner" class="site-banner hidden" role="status"></div>
+
+      <div class="home-prayer-card" id="homePrayerCard">
+        <div class="home-prayer-icon">🕌</div>
+        <div class="home-prayer-info">
+          <div class="home-prayer-label" data-i18n="prayer_next">الصلاة القادمة</div>
+          <div class="home-prayer-name" id="homeNextPrayerName">—</div>
+          <div class="home-prayer-time" id="homeNextPrayerTime">—</div>
+          <div class="home-prayer-remaining" id="homeNextPrayerRemaining">—</div>
+        </div>
+        <button class="home-qibla-action" onclick="event.stopPropagation(); showQibla();" aria-label="فتح القبلة" title="اتجاه القبلة">
+          <span class="home-qibla-action-icon">🧭</span>
+          <span class="home-qibla-action-text">القبلة</span>
+          <span class="home-qibla-action-arrow">←</span>
+        </button>
+      </div>
+
+      <div class="home-ayah-card">
+        <div class="home-ayah-header">
+          <span data-i18n="ayah_of_day">آية اليوم</span>
+        </div>
+        <p class="home-ayah-text" id="homeAyahText">﴿ وَقُل رَّبِّ زِدْنِي عِلْمًا ﴾</p>
+        <p class="home-ayah-ref" id="homeAyahRef">سورة طه — الآية ١١٤</p>
+      </div>
+
+      <div id="homeAdsTop" class="home-ads-slot" aria-label="إعلانات"></div>
+
+      <section id="homeNewsSection" class="home-news-section">
+        <div class="section-heading"><h2 class="home-sections-title">آخر الأخبار</h2><span class="section-eyebrow">طريق الهدى</span></div>
+        <label class="news-search">ابحث في الأخبار <input id="homeNewsSearch" type="search" placeholder="عنوان أو كلمة..." oninput="renderHomeEvents()" /></label>
+        <div id="homeEvents" class="home-events" aria-live="polite"></div>
+      </section>
+
+      <div id="authWidget" class="auth-widget"></div>
+
+      <div class="profile-card hidden" id="profileCard">
+        <h3>ملفي الشخصي</h3>
+        <div class="profile-row"><span>الاسم</span><strong id="profileName">—</strong></div>
+        <div class="profile-row"><span>اسم المستخدم</span><strong id="profileUsername">—</strong></div>
+        <div class="profile-row"><span>البريد</span><strong id="profileEmail">—</strong></div>
+        <div class="profile-row"><span>تاريخ الميلاد</span><strong id="profileBirthDate">—</strong></div>
+        <div class="profile-row"><span>الجنس</span><strong id="profileGender">—</strong></div>
+        <div class="profile-row"><span>آخر دخول</span><strong id="profileLastLogin">—</strong></div>
+        <p class="profile-bio" id="profileBio">لا توجد نبذة بعد</p>
+        <button class="auth-action-btn" type="button" onclick="openAuthModal('profile')">تعديل الملف</button>
+      </div>
+
+      <div id="homeAdsBottom" class="home-ads-slot" aria-label="إعلانات أسفل الصفحة"></div>
+
+      <div class="home-last-played" id="homeLastPlayed" style="display: none;">
+        <h2 class="home-sections-title" data-i18n="continue_listening">تابع الاستماع</h2>
+        <div class="home-last-card" onclick="resumeLastPlayed()">
+          <div class="home-last-icon">🎙️</div>
+          <div class="home-last-info">
+            <div class="home-last-name" id="homeLastSurahName">—</div>
+            <div class="home-last-reciter" id="homeLastReciterName">—</div>
+          </div>
+          <div class="home-last-play">▶</div>
+        </div>
+      </div>
+
+      <footer class="home-footer">
+        <div class="home-footer-text" data-i18n="made_by">صنع بواسطة ZaidAli</div>
+        <div class="home-footer-version">
+          <span>v7.3</span>
+          <span class="home-footer-dot">•</span>
+          <span data-i18n="app_version">الإصدار الحالي</span>
+        </div>
+      </footer>
+
+    </section>
+
+    <!-- ===== 👥 الأصدقاء والمحادثات ===== -->
+    <section id="friendsView" class="view">
+      <div class="friends-hero">
+        <div class="friends-tabs">
+          <button type="button" class="friends-tab active" data-friends-tab="chats" onclick="switchFriendsTab('chats')">
+            <span class="friends-tab-icon">💬</span>
+            <span class="friends-tab-label">المحادثات</span>
+          </button>
+          <button type="button" class="friends-tab" data-friends-tab="friends" onclick="switchFriendsTab('friends')">
+            <span class="friends-tab-icon">👥</span>
+            <span class="friends-tab-label">أصدقائي</span>
+          </button>
+          <button type="button" class="friends-tab" data-friends-tab="requests" onclick="switchFriendsTab('requests')">
+            <span class="friends-tab-icon">📬</span>
+            <span class="friends-tab-label">الطلبات</span>
+            <span class="tab-badge" id="requestsBadge"></span>
+          </button>
+          <button type="button" class="friends-tab" data-friends-tab="search" onclick="switchFriendsTab('search')">
+            <span class="friends-tab-icon">🔍</span>
+            <span class="friends-tab-label">بحث</span>
+          </button>
+          <button type="button" class="friends-tab" data-friends-tab="groups" onclick="switchFriendsTab('groups')">
+            <span class="friends-tab-icon">👨‍👩‍👦</span>
+            <span class="friends-tab-label">قروب جديد</span>
+          </button>
+        </div>
+
+        <div class="friends-panel active" data-friends-panel="chats">
+          <div class="chats-list" id="chatsList">
+            <div class="friends-empty">
+              <span class="friends-empty-icon">💬</span>
+              جارٍ التحميل...
+            </div>
+          </div>
+        </div>
+
+        <div class="friends-panel" data-friends-panel="friends">
+          <div class="friends-list" id="friendsList">
+            <div class="friends-empty">
+              <span class="friends-empty-icon">👥</span>
+              جارٍ التحميل...
+            </div>
+          </div>
+        </div>
+
+        <div class="friends-panel" data-friends-panel="requests">
+          <div class="friends-list" id="friendsRequestsList">
+            <div class="friends-empty">
+              <span class="friends-empty-icon">📭</span>
+              جارٍ التحميل...
+            </div>
+          </div>
+        </div>
+
+        <div class="friends-panel" data-friends-panel="search">
+          <div class="friends-search-box">
+            <span class="friends-search-icon">🔍</span>
+            <input
+              type="text"
+              id="friendsSearchInput"
+              class="friends-search-input"
+              placeholder="ابحث بالاسم أو اسم المستخدم..."
+              oninput="searchUsers(this.value)"
+            />
+          </div>
+          <div class="friends-list" id="friendsSearchResults">
+            <div class="friends-empty">
+              <span class="friends-empty-icon">🔍</span>
+              ابدأ بالكتابة للبحث
+            </div>
+          </div>
+        </div>
+
+        <div class="friends-panel" data-friends-panel="groups">
+          <div class="group-creator">
+            <h3 style="color: var(--gold); margin-bottom: 12px; font: 800 1rem var(--font-ui);">👨‍👩‍👦 إنشاء قروب جديد</h3>
+            <input type="text" id="groupNameInput" class="group-name-input" placeholder="اسم القروب..." maxlength="40" />
+            <p style="font: 500 0.78rem var(--font-ui); color: rgba(245,241,232,0.6); margin-bottom: 10px;">اختر الأعضاء:</p>
+            <div class="group-members-list" id="groupMembersList">
+              <div class="friends-empty">
+                <span class="friends-empty-icon">👥</span>
+                جارٍ التحميل...
+              </div>
+            </div>
+            <button class="new-chat-btn" onclick="createGroup()">
+              <span>✨</span>
+              <span>إنشاء القروب</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== لوحة المطور ===== -->
+    <section id="developerView" class="view">
+      <header class="view-header developer-header">
+        <div>
+          <span class="section-eyebrow">مركز الإدارة</span>
+          <h1 class="view-title">لوحة المطور</h1>
+          <p class="developer-subtitle">المحتوى والحسابات والإعدادات والميزات في مكان واحد</p>
+        </div>
+        <div class="developer-header-actions">
+          <button class="back-btn developer-password-btn" onclick="changeDeveloperPassword()">
+            <span>🔐</span>
+            <span>كلمة المرور</span>
+          </button>
+          <button class="back-btn" onclick="lockDeveloperPanel()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            <span>إغلاق</span>
+          </button>
+        </div>
+      </header>
+
+      <p class="local-notice">إدارة سحابية. كل التغييرات تُحفظ في Firebase وتظهر لجميع الزوار مباشرة.</p>
+
+      <nav class="developer-tabs" aria-label="أقسام الإدارة">
+        <button type="button" class="active" data-dev-tab="overview" onclick="switchDeveloperTab('overview')">📊 نظرة عامة</button>
+        <button type="button" data-dev-tab="stats" onclick="switchDeveloperTab('stats')">📈 إحصائيات</button>
+        <button type="button" data-dev-tab="news" onclick="switchDeveloperTab('news')">📰 الأخبار</button>
+        <button type="button" data-dev-tab="ads" onclick="switchDeveloperTab('ads')">💰 الإعلانات</button>
+        <button type="button" data-dev-tab="messages" onclick="switchDeveloperTab('messages')">📢 الرسائل</button>
+        <button type="button" data-dev-tab="features" onclick="switchDeveloperTab('features')">🎛️ الميزات</button>
+        <button type="button" data-dev-tab="users" onclick="switchDeveloperTab('users')">👥 المستخدمون</button>
+        <button type="button" data-dev-tab="banned" onclick="switchDeveloperTab('banned')">🚫 الأجهزة المحظورة</button>
+        <button type="button" data-dev-tab="settings" onclick="switchDeveloperTab('settings')">⚙️ الإعدادات</button>
+        <button type="button" data-dev-tab="tools" onclick="switchDeveloperTab('tools')">🧰 الأدوات</button>
+        <button type="button" data-dev-tab="backup" onclick="switchDeveloperTab('backup')">💾 النسخ الاحتياطي</button>
+      </nav>
+
+      <div data-dev-panel="overview">
+        <div class="developer-stats">
+          <div><span>المستخدمون</span><strong id="devStatUsers">0</strong></div>
+          <div><span>أخبار نشطة</span><strong id="devStatNews">0</strong></div>
+          <div><span>إعلانات نشطة</span><strong id="devStatAds">0</strong></div>
+          <div><span>مشاهدات محلية</span><strong id="devStatImpressions">0</strong></div>
+        </div>
+        <div class="developer-panel">
+          <h2>ابدأ بإدارة محتواك</h2>
+          <p>كل التغييرات تُحفظ في Firebase وتظهر لجميع الزوار فوراً.</p>
+          <div class="developer-header-actions">
+            <button class="developer-primary-btn" onclick="switchDeveloperTab('news')">📰 إضافة خبر</button>
+            <button class="auth-action-btn" onclick="switchDeveloperTab('ads')">💰 إنشاء إعلان</button>
+            <button class="auth-action-btn" onclick="switchDeveloperTab('features')">🎛️ إدارة الميزات</button>
+            <button class="auth-action-btn" onclick="switchDeveloperTab('messages')">📢 رسالة جديدة</button>
+            <button class="auth-action-btn" onclick="switchDeveloperTab('tools')">🧰 الأدوات</button>
+            <button class="auth-action-btn" onclick="showHome()">👁️ معاينة الرئيسية</button>
+          </div>
+          <h2 class="activity-heading">آخر النشاطات</h2>
+          <div id="developerActivity" class="developer-list"></div>
+        </div>
+      </div>
+
+      <div class="developer-panel hidden" data-dev-panel="stats">
+        <h2>📈 إحصائيات متقدمة</h2>
+        <p class="field-help">نظرة تفصيلية على محتوى الموقع + أدوات صيانة وتشخيص.</p>
+        <div id="developerAdvancedStats">
+          <p class="developer-empty">⏳ جارٍ التحميل...</p>
+        </div>
+      </div>
+
+      <div class="developer-grid hidden" data-dev-panel="news">
+        <div class="developer-panel">
+          <h2>محرر الأخبار</h2>
+          <form id="developerEventForm" class="developer-form" onsubmit="event.preventDefault(); runDeveloperAction(saveDeveloperEvent);">
+            <label for="developerEventTitle">العنوان</label><input id="developerEventTitle" type="text" maxlength="80" required />
+            <label for="developerEventDescription">نص الخبر</label><textarea id="developerEventDescription" rows="5" maxlength="3000"></textarea>
+            <label for="developerEventLink">رابط التفاصيل (اختياري)</label><input id="developerEventLink" type="url" placeholder="https://" />
+            <label for="developerEventImage">رابط الصورة (اختياري)</label><input id="developerEventImage" type="url" placeholder="https://" oninput="previewContentImage('news')" />
+            <div class="developer-field-row">
+              <label>الفئة</label>
+              <select id="developerEventCategory">
+                <option value="news">خبر</option>
+                <option value="promo">عرض</option>
+                <option value="highlight">مميز</option>
+                <option value="announcement">إعلان</option>
+              </select>
+            </div>
+            <div class="developer-field-row">
+              <label>الأولوية</label>
+              <input id="developerEventPriority" type="number" min="1" max="100" value="50" />
+            </div>
+            <div class="developer-field-row">
+              <label>يبدأ</label>
+              <input id="developerEventStarts" type="datetime-local" />
+            </div>
+            <div class="developer-field-row">
+              <label>ينتهي</label>
+              <input id="developerEventEnds" type="datetime-local" />
+            </div>
+            <p class="field-help">اترك النهاية فارغة للنشر دون تاريخ انتهاء.</p>
+            <label class="toggle-row"><input id="developerEventFeatured" type="checkbox" /> مميز في الصفحة</label>
+            <label class="toggle-row"><input id="developerEventPinned" type="checkbox" /> تثبيت في أعلى الأخبار</label>
+            <label class="toggle-row"><input id="developerEventActive" type="checkbox" checked /> منشور (ألغِ التحديد لحفظ مسودة)</label>
+            <img id="developerImagePreview" class="developer-preview" alt="معاينة الصورة" />
+            <div class="form-actions">
+              <button id="developerEventSubmit" type="submit" class="developer-primary-btn">حفظ الخبر</button>
+              <button type="button" class="auth-action-btn" onclick="previewContent('news')">معاينة</button>
+              <button type="button" class="auth-action-btn" onclick="resetNewsForm()">تفريغ المحرر</button>
+            </div>
+          </form>
+        </div>
+        <div class="developer-panel">
+          <h2>الأخبار المحفوظة</h2>
+          <div class="filter-bar">
+            <input id="developerNewsSearch" type="search" placeholder="ابحث عن خبر..." oninput="renderDeveloperEvents()" />
+            <select id="developerNewsStatus" onchange="renderDeveloperEvents()">
+              <option value="all">كل الحالات</option>
+              <option value="published">منشور</option>
+              <option value="draft">مسودة</option>
+            </select>
+          </div>
+          <div id="developerEventsList" class="developer-list"></div>
+        </div>
+      </div>
+
+      <div class="developer-grid hidden" data-dev-panel="ads">
+        <div class="developer-panel">
+          <h2>محرر الإعلانات</h2>
+          <form id="developerAdForm" class="developer-form" onsubmit="event.preventDefault(); runDeveloperAction(saveDeveloperAd);">
+            <label for="developerAdTitle">عنوان الإعلان</label><input id="developerAdTitle" maxlength="80" required />
+            <label for="developerAdBody">الوصف</label><textarea id="developerAdBody" rows="4" maxlength="1000"></textarea>
+            <label for="developerAdLink">رابط الإعلان (اختياري)</label><input id="developerAdLink" type="url" placeholder="https://" />
+            <label for="developerAdImage">رابط الصورة (اختياري)</label><input id="developerAdImage" type="url" placeholder="https://" oninput="previewContentImage('ads')" />
+            <label for="developerAdCta">نص زر الرابط</label><input id="developerAdCta" maxlength="30" value="معرفة المزيد" />
+            <label for="developerAdPlacement">موضع العرض</label>
+            <select id="developerAdPlacement">
+              <option value="home-top">أعلى الرئيسية</option>
+              <option value="home-mid">بين الأخبار</option>
+              <option value="home-bottom">أسفل الرئيسية</option>
+              <option value="popup">نافذة منبثقة</option>
+            </select>
+            <label for="developerAdAudience">الجمهور</label>
+            <select id="developerAdAudience">
+              <option value="all">الجميع</option>
+              <option value="guest">الزوار غير المسجلين</option>
+              <option value="member">المسجلون فقط</option>
+            </select>
+            <label for="developerAdPriority">الأولوية</label><input id="developerAdPriority" type="number" min="1" max="100" value="50" />
+            <label for="developerAdStarts">يبدأ</label><input id="developerAdStarts" type="datetime-local" />
+            <label for="developerAdEnds">ينتهي (اختياري)</label><input id="developerAdEnds" type="datetime-local" />
+            <label class="toggle-row"><input id="developerAdActive" type="checkbox" checked /> منشور</label>
+            <label class="toggle-row"><input id="developerAdDismissible" type="checkbox" checked /> السماح بإخفاء الإعلان</label>
+            <img id="developerAdImagePreview" class="developer-preview" alt="معاينة صورة الإعلان" />
+            <div class="form-actions">
+              <button id="developerAdSubmit" type="submit" class="developer-primary-btn">حفظ الإعلان</button>
+              <button type="button" class="auth-action-btn" onclick="previewContent('ads')">معاينة</button>
+              <button type="button" class="auth-action-btn" onclick="resetAdForm()">تفريغ المحرر</button>
+            </div>
+          </form>
+        </div>
+        <div class="developer-panel">
+          <h2>الإعلانات المحفوظة</h2>
+          <div class="filter-bar">
+            <input id="developerAdsSearch" type="search" placeholder="ابحث..." oninput="renderDeveloperAds()" />
+            <select id="developerAdsStatus" onchange="renderDeveloperAds()">
+              <option value="all">الكل</option>
+              <option value="published">منشور</option>
+              <option value="draft">مسودة</option>
+            </select>
+          </div>
+          <div id="developerAdsList" class="developer-list"></div>
+        </div>
+      </div>
+
+      <div class="developer-grid hidden" data-dev-panel="messages">
+        <div class="developer-panel">
+          <h2>📢 إنشاء رسالة منبثقة</h2>
+          <p class="field-help">تظهر هذه الرسائل لجميع الزوار في كل الأجهزة. يمكنهم إغلاقها.</p>
+
+          <form class="developer-form" onsubmit="event.preventDefault(); addDevMessage();">
+            <label for="devMessageTitle">عنوان الرسالة *</label>
+            <input id="devMessageTitle" type="text" maxlength="80" placeholder="مرحباً بكم في طريق الهدى" required />
+
+            <label for="devMessageBody">نص الرسالة (اختياري)</label>
+            <textarea id="devMessageBody" rows="3" maxlength="300" placeholder="نص توضيحي قصير..."></textarea>
+
+            <div class="developer-field-row">
+              <label>الأيقونة</label>
+              <select id="devMessageIcon">
+                <option value="📢">📢 إعلان</option>
+                <option value="🎉">🎉 تهانينا</option>
+                <option value="⚠️">⚠️ تحذير</option>
+                <option value="🆕">🆕 جديد</option>
+                <option value="🎁">🎁 هدية</option>
+                <option value="🌟">🌟 ميزة</option>
+                <option value="🔔">🔔 تنبيه</option>
+                <option value="💡">💡 نصيحة</option>
+              </select>
+            </div>
+
+            <div class="developer-field-row">
+              <label>اللون</label>
+              <select id="devMessageColor">
+                <option value="gold">🟡 ذهبي</option>
+                <option value="green">🟢 أخضر</option>
+                <option value="blue">🔵 أزرق</option>
+                <option value="red">🔴 أحمر</option>
+                <option value="purple">🟣 بنفسجي</option>
+              </select>
+            </div>
+
+            <label class="toggle-row"><input id="devMessageDismissible" type="checkbox" checked /> السماح للزوار بإغلاقها</label>
+
+            <div class="form-actions">
+              <button type="submit" class="developer-primary-btn">📤 نشر الرسالة</button>
+              <button type="button" class="auth-action-btn" onclick="previewDevMessage()">👁️ معاينة</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="developer-panel">
+          <h2>📋 الرسائل المنشورة</h2>
+          <div id="devMessagesList" class="developer-list"></div>
+        </div>
+      </div>
+
+      <div class="developer-panel hidden" data-dev-panel="features">
+        <h2>🎛️ إدارة الميزات</h2>
+        <p class="field-help">تحكم في تفعيل أو تعطيل أي ميزة. التغييرات تُحفظ في Firebase وتظهر لجميع الزوار فوراً.</p>
+
+        <div class="features-stats" id="featuresStats"></div>
+        <div class="features-grid" id="featuresGrid"></div>
+
+        <div class="form-actions" style="margin-top: 20px;">
+          <button class="developer-primary-btn" onclick="devSyncCloud()">☁️ مزامنة الآن</button>
+          <button class="auth-action-btn" onclick="if(confirm('إعادة جميع الميزات للافتراضي؟')){resetFeatures(); renderFeaturesGrid(); showToast('تمت إعادة التعيين');}">↺ إعادة الافتراضي</button>
+        </div>
+      </div>
+
+      <div class="developer-panel hidden" data-dev-panel="users">
+        <h2>إدارة المستخدمين (Firebase)</h2>
+        <p class="field-help">يتم جلب المستخدمين مباشرة من Firebase. الإيقاف يمنع الدخول لكن لا يحذف الحساب.</p>
+        <div class="filter-bar">
+          <input id="developerUsersSearch" type="search" placeholder="الاسم أو البريد..." oninput="renderRegisteredUsers()" />
+          <select id="developerUsersStatus" onchange="renderRegisteredUsers()">
+            <option value="all">الجميع</option>
+            <option value="active">نشط</option>
+            <option value="disabled">موقوف</option>
+            <option value="banned">محظور</option>
+          </select>
+        </div>
+        <div id="developerUsersList" class="developer-list"></div>
+      </div>
+
+      <div class="developer-panel hidden" data-dev-panel="banned">
+        <h2>🚫 إدارة الأجهزة المحظورة</h2>
+        <p class="field-help">أضف بصمة الجهاز لحظره من استخدام التطبيق نهائياً. تُحفظ في Firebase.</p>
+
+        <div class="developer-form">
+          <label for="banDeviceInput">بصمة الجهاز (Fingerprint)</label>
+          <input id="banDeviceInput" type="text" placeholder="dev_xxxxx" />
+
+          <label for="banDeviceReason">سبب الحظر</label>
+          <input id="banDeviceReason" type="text" placeholder="انتهاك القوانين" />
+
+          <div class="form-actions">
+            <button class="developer-primary-btn" onclick="banDeviceFromPanel()">🚫 حظر الجهاز</button>
+            <button class="auth-action-btn" onclick="banMyDevice()">⚠️ احظر جهازي</button>
+          </div>
+        </div>
+
+        <h3 style="color: var(--gold); margin: 20px 0 12px;">
+          الأجهزة المحظورة: <span id="bannedDevicesCount">0</span>
+        </h3>
+        <div id="bannedDevicesList" class="developer-list"></div>
+      </div>
+
+      <div class="developer-panel hidden" data-dev-panel="settings">
+        <h2>إعدادات المطور</h2>
+        <form id="developerSettingsForm" class="developer-form" onsubmit="event.preventDefault(); runDeveloperAction(saveDeveloperSettings);">
+          <div class="developer-field-row">
+            <label>أقصى أخبار</label>
+            <input id="developerMaxNews" type="number" min="1" max="12" value="6" />
+          </div>
+          <div class="developer-field-row">
+            <label>تحديث (دقيقة)</label>
+            <input id="developerRefresh" type="number" min="1" max="60" value="5" />
+          </div>
+
+          <label class="toggle-row"><input id="developerEnableHomeNews" type="checkbox" checked /> تفعيل الأخبار في الرئيسية</label>
+          <label class="toggle-row"><input id="developerEnableAds" type="checkbox" checked /> تفعيل الإعلانات</label>
+          <label class="toggle-row"><input id="developerEnablePopupAds" type="checkbox" checked /> تفعيل الإعلان المنبثق</label>
+          <label class="toggle-row"><input id="developerPopupOnce" type="checkbox" checked /> إعلان منبثق واحد لكل جلسة</label>
+          <label class="toggle-row"><input id="developerInterleaveAds" type="checkbox" checked /> إدراج إعلان بين الأخبار</label>
+          <label for="developerMaxAds">أقصى إعلانات في الموضع الواحد</label>
+          <input id="developerMaxAds" type="number" min="1" max="5" value="2" />
+
+          <label class="toggle-row"><input id="developerAllowRegistration" type="checkbox" checked /> السماح بإنشاء حسابات</label>
+          <label class="toggle-row"><input id="developerRequireLogin" type="checkbox" /> اشتراط تسجيل الدخول</label>
+          <label class="toggle-row"><input id="developerBannerEnabled" type="checkbox" /> عرض شريط تنبيه</label>
+          <label for="developerBannerText">نص التنبيه</label><input id="developerBannerText" maxlength="200" />
+          <label class="toggle-row"><input id="developerMaintenance" type="checkbox" /> وضع الصيانة</label>
+          <label for="developerMaintenanceMessage">رسالة الصيانة</label>
+          <textarea id="developerMaintenanceMessage" rows="2" maxlength="300"></textarea>
+
+          <div class="developer-field-row">
+            <label>مؤشر الآية</label>
+            <select id="developerAyahMode">
+              <option value="balanced">متوازن</option>
+              <option value="strict">دقيق</option>
+              <option value="relaxed">مرن</option>
+            </select>
+          </div>
+          <div class="developer-field-row">
+            <label>التحمل</label>
+            <input id="developerAyahTolerance" type="number" min="0.5" max="5" step="0.1" value="1.2" />
+          </div>
+
+          <div class="developer-field-row">
+            <label>وضع الأداء</label>
+            <select id="developerPerformanceMode">
+              <option value="balanced">متوازن</option>
+              <option value="performance">أداء عالي</option>
+              <option value="battery">توفير بطارية</option>
+            </select>
+          </div>
+
+          <label class="toggle-row"><input id="developerDebugLogs" type="checkbox" /> تسجيل التصحيح</label>
+          <button type="submit" class="developer-primary-btn">حفظ الإعدادات (سحابي)</button>
+        </form>
+      </div>
+
+      <div class="developer-panel hidden" data-dev-panel="tools">
+        <h2>🧰 أدوات المطور</h2>
+        <p class="field-help">أدوات متقدمة للفحص والتحسين والصيانة والمزامنة.</p>
+        <div class="dev-tools-grid" id="devToolsGrid"></div>
+      </div>
+
+      <div class="developer-panel hidden" data-dev-panel="backup">
+        <h2>نسخة احتياطية</h2>
+        <p>تصدير الأخبار والإعلانات والمستخدمين والميزات والرسائل والأجهزة المحظورة.</p>
+        <div class="form-actions">
+          <button class="developer-primary-btn" onclick="exportDeveloperData()">📥 تصدير JSON</button>
+          <button class="auth-action-btn" onclick="resetDismissedAds()">🔄 إعادة إظهار الإعلانات المخفية</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 🧭 القبلة ===== -->
+    <section id="qiblaView" class="view">
+      <div class="qibla-hero">
+
+        <div class="qibla-header">
+          <h1 class="qibla-title">🧭 اتجاه القبلة</h1>
+          <p class="qibla-subtitle">وجّه هاتفك حتى يتحول السهم للأخضر</p>
+        </div>
+
+        <div class="qibla-ar-view" id="qiblaARView">
+          <video id="qiblaVideo" playsinline autoplay muted></video>
+          <div class="ar-grid"></div>
+          <div class="ar-horizon"></div>
+          <div class="ar-crosshair" id="arCrosshair"></div>
+
+          <div class="ar-kaaba-indicator" id="arKaabaIndicator">
+            <div class="ar-kaaba-ring"></div>
+            <div class="ar-kaaba-wave"></div>
+            <div class="ar-kaaba-icon">🕋</div>
+            <div class="ar-kaaba-label">🎯 الكعبة أمامك</div>
+          </div>
+
+          <div class="ar-label">🕋 الكعبة في هذا الاتجاه</div>
+        </div>
+
+        <div class="qibla-compass-wrapper">
+          <svg class="qibla-compass-svg" id="qiblaCompassSvg" viewBox="0 0 360 360">
+            <defs>
+              <radialGradient id="compassBg" cx="50%" cy="50%" r="50%">
+                <stop offset="0%"   stop-color="rgba(212,175,55,0.14)"/>
+                <stop offset="65%"  stop-color="rgba(13,59,46,0.55)"/>
+                <stop offset="100%" stop-color="rgba(13,59,46,0.95)"/>
+              </radialGradient>
+
+              <linearGradient id="needleGradN" x1="0%" y1="100%" x2="0%" y2="0%">
+                <stop offset="0%"   stop-color="#d4af37" stop-opacity="0.6"/>
+                <stop offset="100%" stop-color="#d4af37" stop-opacity="1"/>
+              </linearGradient>
+
+              <filter id="needleGlow" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="3" result="blur"/>
+                <feMerge>
+                  <feMergeNode in="blur"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
+            </defs>
+
+            <circle class="qibla-compass-bg"
+                    cx="180" cy="180" r="172"
+                    fill="url(#compassBg)"
+                    stroke="#d4af37" stroke-width="2.5"/>
+
+            <circle cx="180" cy="180" r="152" fill="none" stroke="rgba(212,175,55,0.2)" stroke-width="1"/>
+            <circle cx="180" cy="180" r="120" fill="none" stroke="rgba(212,175,55,0.12)" stroke-width="1" stroke-dasharray="3,6"/>
+            <circle cx="180" cy="180" r="70"  fill="none" stroke="rgba(212,175,55,0.08)" stroke-width="1"/>
+
+            <g id="qiblaTicks"></g>
+
+            <g font-family="Cairo, sans-serif" font-weight="800" text-anchor="middle">
+              <text x="180" y="34"  font-size="22" fill="#ff8a7a">ش</text>
+              <text x="180" y="344" font-size="20" fill="#d4af37">ج</text>
+              <text x="338" y="188" font-size="20" fill="#d4af37">ق</text>
+              <text x="22"  y="188" font-size="20" fill="#d4af37">غ</text>
+            </g>
+
+            <g fill="rgba(212,175,55,0.55)" font-family="Cairo, sans-serif" font-size="11" font-weight="700" text-anchor="middle">
+              <text x="292" y="72">ش.ق</text>
+              <text x="292" y="296">ج.ق</text>
+              <text x="68"  y="296">ج.غ</text>
+              <text x="68"  y="72">ش.غ</text>
+            </g>
+
+            <g id="qiblaNeedle" filter="url(#needleGlow)">
+              <polygon class="needle-north"
+                       points="180,42 172,180 188,180"
+                       fill="#d4af37"/>
+
+              <polygon class="needle-south"
+                       points="180,318 174,180 186,180"
+                       fill="rgba(212,175,55,0.35)"/>
+
+              <circle cx="180" cy="42" r="4" fill="#ffffff" opacity="0.95"/>
+
+              <g transform="translate(180, 30)">
+                <rect x="-7" y="-7" width="14" height="14"
+                      fill="#0a0a0a" stroke="#d4af37" stroke-width="1" rx="2"/>
+                <rect x="-7" y="-2.5" width="14" height="2" fill="#d4af37"/>
+              </g>
+
+              <circle class="needle-core"
+                      cx="180" cy="180" r="11"
+                      fill="#0d3b2e" stroke="#d4af37" stroke-width="2.5"/>
+              <circle cx="180" cy="180" r="4" fill="#d4af37"/>
+            </g>
+
+            <text x="180" y="216" font-family="Cairo, sans-serif" font-weight="800" font-size="16"
+                  fill="#e6c869" text-anchor="middle" id="qiblaDegree">—°</text>
+          </svg>
+        </div>
+
+        <div class="qibla-offset" id="qiblaOffset">
+          <span class="arrow">—</span> بانتظار التفعيل
+        </div>
+
+        <div class="qibla-distance-card">
+          <span class="qibla-distance-icon">📍</span>
+          <span class="qibla-distance-label">المسافة للكعبة:</span>
+          <strong class="qibla-distance-value" id="qiblaDistance">— كم</strong>
+        </div>
+
+        <div class="qibla-accuracy" id="qiblaAccuracy">اضغط للتفعيل</div>
+
+        <div class="qibla-status" id="qiblaStatus">اضغط "تفعيل البوصلة" للبدء</div>
+
+        <div class="qibla-actions">
+          <button class="qibla-btn qibla-btn-primary" id="qiblaStartBtn" onclick="startQibla()">
+            <span class="qibla-btn-icon">🧭</span>
+            <span class="qibla-btn-label" id="qiblaStartLabel">تفعيل البوصلة</span>
+          </button>
+
+          <button class="qibla-btn qibla-btn-secondary" id="qiblaARBtn" onclick="toggleARCamera()">
+            <span class="qibla-btn-icon">📷</span>
+            <span class="qibla-btn-label" id="qiblaARLabel">تشغيل الكاميرا</span>
+          </button>
+
+          <button class="qibla-btn qibla-btn-secondary" onclick="requestQiblaLocation()">
+            <span class="qibla-btn-icon">📍</span>
+            <span class="qibla-btn-label">تحديث موقعي</span>
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===== أسماء الله الحسنى ===== -->
+    <section id="namesView" class="view">
+      <header class="view-header names-header">
+        <div>
+          <h1 class="view-title">✨ أسماء الله الحسنى</h1>
+          <p class="names-subtitle">فَادْعُوهُ بِهَا</p>
+        </div>
+        <button class="names-random-btn" onclick="showRandomName()" title="اسم عشوائي">⌁ <span>تأمل عشوائي</span></button>
+      </header>
+      <div class="names-intro">
+        <div class="names-intro-mark">99</div>
+        <div><strong>أسماء الله الحسنى</strong><span>تصفّح الأسماء، ابحث فيها، واحفظ ما يلامس قلبك</span></div>
+      </div>
+      <div class="names-tools">
+        <label class="names-search"><span>⌕</span><input id="namesSearch" type="search" placeholder="ابحث عن اسم..." oninput="filterNames(this.value)"></label>
+        <button class="names-filter-btn active" id="allNamesBtn" onclick="setNamesFilter('all')">الكل <b>99</b></button>
+        <button class="names-filter-btn" id="favoriteNamesBtn" onclick="setNamesFilter('favorites')">المفضلة <b id="favoriteNamesCount">0</b></button>
+      </div>
+      <div class="names-grid" id="namesGrid"></div>
+    </section>
+
+    <!-- ===== القرآن ===== -->
+    <section id="surahsView" class="view">
+      <header class="view-header">
+        <h1 class="view-title" data-i18n="quran_title">📖 القرآن الكريم</h1>
+      </header>
+
+      <div class="search-section">
+        <div class="search-box">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="m21 21-4.35-4.35"/>
+          </svg>
+          <input
+            type="text"
+            id="searchInput"
+            class="search-input"
+            data-i18n-placeholder="search_placeholder"
+            placeholder="ابحث عن سورة..."
+            oninput="filterSurahs()"
+          />
+          <button class="search-btn" onclick="focusSearch()">
+            <span data-i18n="search_btn">بحث</span>
+          </button>
+        </div>
+
+        <div class="filter-btns">
+          <button class="filter-btn active" data-filter="all" onclick="setFilter('all')" data-i18n="filter_all">الكل</button>
+          <button class="filter-btn" data-filter="makkah" onclick="setFilter('makkah')" data-i18n="filter_makkah">مكية</button>
+          <button class="filter-btn" data-filter="madinah" onclick="setFilter('madinah')" data-i18n="filter_madinah">مدنية</button>
+          <button class="filter-btn filter-bookmarks" onclick="showBookmarks()">
+            <span>🔖</span>
+            <span data-i18n="bookmarks">المفضلة</span>
+            <span id="bookmarksCount" class="bookmarks-count">0</span>
+          </button>
+        </div>
+      </div>
+
+      <div id="surahsList" class="surahs-list">
+        <div class="loading" data-i18n="loading">جارٍ التحميل...</div>
+      </div>
+    </section>
+
+    <!-- ===== السورة ===== -->
+    <section id="surahView" class="view">
+      <header class="surah-view-header">
+        <button class="back-btn" onclick="closeSurah()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+          </svg>
+          <span data-i18n="back_to_list">رجوع للقائمة</span>
+        </button>
+
+        <div class="surah-view-title">
+          <h2 id="surahViewName" class="surah-view-name"></h2>
+          <p id="surahViewInfo" class="surah-view-info"></p>
+        </div>
+
+        <button class="share-btn" onclick="shareSurah()" data-i18n-title="share" title="مشاركة السورة">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="18" cy="5" r="3"/>
+            <circle cx="6" cy="12" r="3"/>
+            <circle cx="18" cy="19" r="3"/>
+            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+          </svg>
+        </button>
+      </header>
+
+      <div class="ayah-search-in-surah">
+        <div class="search-box">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="m21 21-4.35-4.35"/>
+          </svg>
+          <input
+            type="text"
+            id="ayahSearchInput"
+            class="search-input"
+            data-i18n-placeholder="search_ayahs_placeholder"
+            placeholder="ابحث في آيات السورة..."
+            oninput="searchAyahsDebounced(this.value)"
+          />
+          <button class="search-btn" onclick="performAyahSearch()">
+            <span data-i18n="search_btn">بحث</span>
+          </button>
+        </div>
+
+        <div id="ayahSearchResults" class="ayah-search-results" style="display: none;"></div>
+      </div>
+
+      <div class="surah-view-body">
+        <p id="basmala" class="basmala">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</p>
+        <div id="ayahsContainer" class="ayahs-container"></div>
+        <p class="sadaqallah" data-i18n="sadaqallah">صدق الله العظيم</p>
+      </div>
+
+      <button class="floating-back-btn" id="floatingBackBtn" onclick="closeSurah()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        <span data-i18n="back">رجوع</span>
+      </button>
+    </section>
+
+    <!-- ===== القرّاء ===== -->
+    <section id="recitersView" class="view">
+      <header class="view-header">
+        <h1 class="view-title" data-i18n="listen_title">🎧 الاستماع</h1>
+      </header>
+
+      <div class="search-section">
+        <div class="search-box">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="m21 21-4.35-4.35"/>
+          </svg>
+          <input
+            type="text"
+            id="recitersSearchInput"
+            class="search-input"
+            data-i18n-placeholder="search_reciter_placeholder"
+            placeholder="ابحث عن قارئ..."
+            oninput="filterReciters()"
+          />
+        </div>
+      </div>
+
+      <div id="recitersList" class="reciters-list">
+        <div class="loading" data-i18n="loading">جارٍ التحميل...</div>
+      </div>
+    </section>
+
+    <!-- ===== سور القارئ ===== -->
+    <section id="reciterSurahsView" class="view">
+      <header class="surah-view-header">
+        <button class="back-btn" onclick="closeReciter()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+          </svg>
+          <span data-i18n="back_to_reciters">رجوع للقرّاء</span>
+        </button>
+
+        <div class="surah-view-title">
+          <h2 id="reciterNameTitle" class="surah-view-name"></h2>
+          <p id="reciterInfoTitle" class="surah-view-info"></p>
+        </div>
+      </header>
+
+      <div class="search-section">
+        <div class="search-box">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="m21 21-4.35-4.35"/>
+          </svg>
+          <input
+            type="text"
+            id="reciterSurahsSearchInput"
+            class="search-input"
+            data-i18n-placeholder="search_placeholder"
+            placeholder="ابحث عن سورة..."
+            oninput="filterReciterSurahs()"
+          />
+        </div>
+      </div>
+
+      <div id="reciterSurahsList" class="surahs-list">
+        <div class="loading" data-i18n="loading">جارٍ التحميل...</div>
+      </div>
+    </section>
+
+    <!-- ===== صفحة التشغيل ===== -->
+    <section id="playingView" class="view">
+      <header class="surah-view-header">
+        <button class="back-btn" onclick="closePlaying()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+          </svg>
+          <span data-i18n="back_to_reciter_surahs">رجوع للسور</span>
+        </button>
+
+        <div class="surah-view-title">
+          <h2 id="playingSurahName" class="surah-view-name"></h2>
+          <p id="playingSurahInfo" class="surah-view-info"></p>
+        </div>
+
+        <button class="share-btn" onclick="sharePlayingSurah()" data-i18n-title="share" title="مشاركة السورة">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="18" cy="5" r="3"/>
+            <circle cx="6" cy="12" r="3"/>
+            <circle cx="18" cy="19" r="3"/>
+            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+          </svg>
+        </button>
+        <button class="share-btn compact-home-btn" onclick="showHome()" title="العودة للرئيسية" aria-label="العودة للرئيسية">⌂</button>
+      </header>
+
+      <div class="playing-tools">
+        <div class="search-box playing-ayah-search-box">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input id="playingAyahSearchInput" class="search-input" type="search" placeholder="ابحث في الآيات أو اكتب رقم الآية..." oninput="searchPlayingAyahs(this.value)" />
+        </div>
+        <div id="playingAyahSearchResults" class="playing-search-results" aria-live="polite"></div>
+      </div>
+
+      <div class="surah-view-body">
+        <p id="playingBasmala" class="basmala">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</p>
+        <div id="playingAyahsContainer" class="ayahs-container playing-ayahs"></div>
+      </div>
+
+      <button class="floating-back-btn" id="floatingBackPlayingBtn" onclick="closePlaying()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        <span data-i18n="back">رجوع</span>
+      </button>
+    </section>
+
+    <!-- ===== مواقيت الصلاة ===== -->
+    <section id="prayerView" class="view">
+      <header class="view-header">
+        <h1 class="view-title" data-i18n="prayer_title">🕌 مواقيت الصلاة</h1>
+      </header>
+
+      <div class="prayer-location-card">
+        <div class="prayer-location-icon">📍</div>
+        <div class="prayer-location-info">
+          <div class="prayer-location-city" id="prayerCity">جارٍ التحديد...</div>
+          <div class="prayer-location-date" id="prayerDate"></div>
+        </div>
+        <button class="prayer-location-btn" onclick="changeLocation()" title="تغيير الموقع">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="prayer-next-card">
+        <div class="prayer-next-label" data-i18n="prayer_next">الصلاة القادمة</div>
+        <div class="prayer-next-name" id="nextPrayerName">—</div>
+        <div class="prayer-next-time" id="nextPrayerTime">—</div>
+        <div class="prayer-next-remaining" id="nextPrayerRemaining">—</div>
+      </div>
+
+      <div class="prayer-list" id="prayerList">
+        <div class="loading" data-i18n="loading">جارٍ التحميل...</div>
+      </div>
+
+      <div class="prayer-settings">
+        <h3 class="prayer-settings-title" data-i18n="prayer_settings">⚙️ الإعدادات</h3>
+
+        <div class="prayer-setting-item">
+          <div class="prayer-setting-label">
+            <span>🎙️</span>
+            <span data-i18n="prayer_muezzin">المؤذن</span>
+          </div>
+          <select class="prayer-setting-select" id="muezzinSelect" onchange="changeMuezzin(this.value)">
+            <optgroup label="🕌 الحرمين الشريفين">
+              <option value="makkah">🕌 الحرم المكي</option>
+              <option value="madinah">🕌 الحرم المدني</option>
+            </optgroup>
+            <optgroup label="🕌 العتبات المقدسة في العراق">
+              <option value="karbala_hussain">🕌 أذان كربلاء المقدسة</option>
+            </optgroup>
+            <optgroup label="🎙️ مؤذنون مشهورون">
+              <option value="ali_mulla">🎙️ الشيخ علي ملا</option>
+              <option value="farooq">🎙️ الشيخ فاروق حضراوي</option>
+              <option value="egypt">🎙️ أذان مصري</option>
+              <option value="calm">🎙️ أذان هادئ</option>
+            </optgroup>
+          </select>
+        </div>
+
+        <div class="prayer-setting-item">
+          <div class="prayer-setting-label">
+            <span>⏰</span>
+            <span data-i18n="prayer_before">إشعار قبل الأذان</span>
+          </div>
+          <select class="prayer-setting-select" id="beforeAlertSelect" onchange="changeBeforeAlert(this.value)">
+            <option value="0">بدون</option>
+            <option value="5">٥ دقائق</option>
+            <option value="10" selected>١٠ دقائق</option>
+            <option value="15">١٥ دقيقة</option>
+            <option value="30">٣٠ دقيقة</option>
+          </select>
+        </div>
+
+        <div class="prayer-buttons-row">
+          <button class="prayer-notify-btn" id="prayerNotifyBtn" onclick="requestNotifications()">
+            <span id="prayerNotifyText" data-i18n="enable_notifications">تفعيل الإشعارات</span>
+          </button>
+
+          <button class="prayer-cancel-btn" id="prayerCancelBtn" onclick="cancelNotifications()" style="display: none;">
+            <span data-i18n="cancel_notifications">إلغاء الإشعارات</span>
+          </button>
+        </div>
+
+        <div class="prayer-notify-status" id="prayerNotifyStatus" style="display: none;">
+          <span data-i18n="notifications_active">✅ الإشعارات مفعّلة</span>
+        </div>
+      </div>
+
+      <div class="prayer-test-section">
+        <div class="prayer-buttons-row">
+          <button class="prayer-test-btn" id="prayerTestBtn" onclick="testAdhan()">
+            <span data-i18n="prayer_test_adhan">اختبار الأذان</span>
+          </button>
+
+          <button class="prayer-stop-btn" id="prayerStopBtn" onclick="stopTestAdhan()" style="display: none;">
+            <span data-i18n="cancel_test">إلغاء الاختبار</span>
+          </button>
+        </div>
+
+        <button class="prayer-test-notify-btn" onclick="testAdhanNotification()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+          <span data-i18n="test_adhan_notification">اختبار إشعار الأذان</span>
+        </button>
+      </div>
+
+    </section>
+
+    <!-- ===== الزيارات ===== -->
+    <section id="ziyaratListView" class="view">
+      <header class="view-header">
+        <h1 class="view-title" data-i18n="ziyarat_title">📿 الزيارات</h1>
+      </header>
+
+      <div class="ziyarat-list" id="ziyaratList">
+        <div class="loading" data-i18n="loading">جارٍ التحميل...</div>
+      </div>
+    </section>
+
+    <section id="ziyaratView" class="view">
+      <header class="ziyarat-view-header">
+        <button class="back-btn" onclick="closeZiyarat()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+          </svg>
+          <span data-i18n="back_to_ziyarat">رجوع للزيارات</span>
+        </button>
+
+        <div class="ziyarat-view-title">
+          <h2 id="ziyaratViewName" class="ziyarat-view-name"></h2>
+          <p id="ziyaratViewInfo" class="ziyarat-view-info"></p>
+        </div>
+        <button class="share-btn compact-home-btn" onclick="showHome()" title="العودة للرئيسية" aria-label="العودة للرئيسية">⌂</button>
+      </header>
+
+      <div class="ziyarat-actions">
+        <button class="ziyarat-action-btn ziyarat-play-btn" id="ziyaratPlayBtn" onclick="toggleZiyaratAudio()">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+          <span data-i18n="listen_ziyarat">استماع</span>
+        </button>
+
+        <button class="ziyarat-action-btn ziyarat-stop-btn" id="ziyaratStopBtn" onclick="stopZiyaratAudio()" style="display: none;">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M6 6h12v12H6z"/>
+          </svg>
+          <span data-i18n="stop_ziyarat">إيقاف</span>
+        </button>
+
+        <button class="ziyarat-action-btn ziyarat-copy-btn" onclick="copyZiyaratText()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+          </svg>
+          <span data-i18n="copy_text">نسخ النص</span>
+        </button>
+      </div>
+
+      <div class="ziyarat-text-container" id="ziyaratTextContainer"></div>
+
+      <audio id="ziyaratAudio" preload="metadata"></audio>
+    </section>
+
+    <!-- ===== 🎲 الاستخارة ===== -->
+    <section id="istikharaView" class="view">
+      <div class="istikhara-hero">
+
+        <div class="istikhara-stars"></div>
+
+        <div class="istikhara-header">
+          <h1 class="istikhara-title">🎲 الاستخارة</h1>
+          <p class="istikhara-subtitle">اطلب الخير من الله في أمرك</p>
+        </div>
+
+        <div class="istikhara-progress">
+          <span class="istikhara-step-dot active" data-step="1"></span>
+          <span class="istikhara-step-dot" data-step="2"></span>
+          <span class="istikhara-step-dot" data-step="3"></span>
+          <span class="istikhara-step-dot" data-step="4"></span>
+        </div>
+
+        <div class="istikhara-stage active" data-stage="1">
+          <div class="istikhara-welcome-icon">🤲</div>
+          <h2 class="istikhara-welcome-title">قبل أن تبدأ</h2>
+          <p class="istikhara-welcome-text">
+            توضّأ واستقبل القبلة إن أمكن، واستحضر عظمة الله في قلبك،
+            ثم اكتب حاجتك بوضوح، وصلّ على محمد وآل محمد ثلاث مرات.
+            ثم ستُفتح لك آية من كتاب الله.
+          </p>
+          <div class="istikhara-actions">
+            <button class="istikhara-btn istikhara-btn-primary" onclick="goToQuestionStage()">
+              <span class="istikhara-btn-icon">✨</span>
+              <span>توضأت، هيا نبدأ</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="istikhara-stage" data-stage="2">
+          <div class="istikhara-question-box">
+            <label class="istikhara-question-label" for="istikharaQuestion">
+              ✍️ اكتب حاجتك بوضوح
+            </label>
+            <textarea
+              id="istikharaQuestion"
+              class="istikhara-textarea"
+              placeholder="مثال: هل أسافر للعمل الجديد أم أبقى في عملي الحالي؟"
+              maxlength="500"
+            ></textarea>
+            <span class="istikhara-char-count" id="istikharaCharCount">0 / 500</span>
+          </div>
+          <div class="istikhara-actions">
+            <button class="istikhara-btn istikhara-btn-primary" onclick="submitQuestion()">
+              <span class="istikhara-btn-icon">→</span>
+              <span>التالي</span>
+            </button>
+            <button class="istikhara-btn istikhara-btn-secondary" onclick="resetIstikhara()">
+              <span class="istikhara-btn-icon">↺</span>
+              <span>إعادة</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="istikhara-stage" data-stage="3">
+          <div class="istikhara-salawat-box">
+            <p class="istikhara-salawat-text">
+              اللَّهُمَّ صَلِّ عَلَىٰ مُحَمَّدٍ وَآلِ مُحَمَّدٍ
+            </p>
+            <div class="istikhara-salawat-counter">
+              <span class="istikhara-counter-num" id="istikharaCounterNum">0</span>
+              <span class="istikhara-counter-total">/ ٣</span>
+            </div>
+            <button class="istikhara-salawat-btn" id="istikharaSalawatBtn" onclick="incrementSalawat()">
+              <span class="istikhara-btn-icon">🤲</span>
+              <span>صليت — أعد مرة أخرى</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="istikhara-stage" data-stage="4">
+          <div class="istikhara-result-header">
+            <div class="istikhara-category-badge" id="istikharaBadge"></div>
+          </div>
+          <div class="istikhara-verse">
+            <p class="istikhara-verse-text" id="istikharaVerseText"></p>
+            <p class="istikhara-verse-ref" id="istikharaVerseRef"></p>
+          </div>
+          <p class="istikhara-wisdom" id="istikharaWisdom"></p>
+          <div class="istikhara-actions">
+            <button class="istikhara-btn istikhara-btn-secondary" onclick="shareIstikhara()">
+              <span class="istikhara-btn-icon">↗</span>
+              <span>شارك النتيجة</span>
+            </button>
+            <button class="istikhara-btn istikhara-btn-primary" onclick="resetIstikhara()">
+              <span class="istikhara-btn-icon">🎲</span>
+              <span>استخارة جديدة</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===== الإحصائيات ===== -->
+    <section id="statsView" class="view">
+      <header class="view-header">
+        <h1 class="view-title" data-i18n="stats_title">📊 إحصائياتي</h1>
+      </header>
+
+      <div class="stats-streak" id="statsStreak">
+        <div class="streak-fire">🔥</div>
+        <div class="streak-info">
+          <div class="streak-number" id="streakNumber">٠</div>
+          <div class="streak-label" data-i18n="stats_streak">أيام متتالية</div>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">📖</div>
+          <div class="stat-value" id="statsAyahsRead">٠</div>
+          <div class="stat-label" data-i18n="stats_ayahs_read">آيات قرأت</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">🎧</div>
+          <div class="stat-value" id="statsMinutes">٠</div>
+          <div class="stat-label" data-i18n="stats_minutes">دقائق استماع</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">📚</div>
+          <div class="stat-value" id="statsSurahs">٠</div>
+          <div class="stat-label" data-i18n="stats_surahs">سور استمعت</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">✅</div>
+          <div class="stat-value" id="statsCompleted">٠</div>
+          <div class="stat-label" data-i18n="stats_completed">سور مكتملة</div>
+        </div>
+      </div>
+
+      <div class="stats-favorites">
+        <div class="favorite-card">
+          <div class="favorite-icon">⭐</div>
+          <div class="favorite-info">
+            <div class="favorite-label" data-i18n="stats_top_surah">أكثر سورة</div>
+            <div class="favorite-value" id="statsTopSurah">—</div>
+          </div>
+        </div>
+
+        <div class="favorite-card">
+          <div class="favorite-icon">🎙️</div>
+          <div class="favorite-info">
+            <div class="favorite-label" data-i18n="stats_top_reciter">أكثر قارئ</div>
+            <div class="favorite-value" id="statsTopReciter">—</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stats-chart-wrap">
+        <h3 class="stats-chart-title" data-i18n="stats_week">آخر ٧ أيام</h3>
+        <div class="stats-chart" id="statsChart"></div>
+      </div>
+
+      <button class="stats-reset-btn" onclick="resetStats()">
+        <span data-i18n="stats_reset">🗑️ إعادة تعيين الإحصائيات</span>
+      </button>
+    </section>
+
+  </main>
+
+  <!-- ✅ مشغل الصوت -->
+  <div id="audioPlayer" class="audio-player">
+    <div class="audio-player-inner">
+
+      <div class="player-info">
+        <div class="player-reciter" id="playerReciter">القارئ</div>
+        <div class="player-surah" id="playerSurah">السورة</div>
+      </div>
+
+      <div class="player-controls">
+        <button class="player-btn" id="shuffleBtn" onclick="toggleShuffle()" title="عشوائي">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/>
+          </svg>
+        </button>
+
+        <button class="player-btn" onclick="playPrev()" title="السابق">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/>
+          </svg>
+        </button>
+
+        <button class="player-btn player-btn-play" id="playPauseBtn" onclick="togglePlay()">
+          <svg id="playIcon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+          <svg id="pauseIcon" viewBox="0 0 24 24" fill="currentColor" style="display:none;">
+            <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+          </svg>
+        </button>
+
+        <button class="player-btn" onclick="playNext()" title="التالي">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/>
+          </svg>
+        </button>
+
+        <button class="player-btn" id="loopBtn" onclick="toggleLoop()" title="تكرار">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/>
+          </svg>
+        </button>
+
+        <div class="player-sleep-wrap">
+          <button class="player-btn" id="sleepBtn" onclick="toggleSleepMenu()" title="مؤقت النوم">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12.34 2.02C6.59 1.82 2 6.42 2 12c0 5.52 4.48 10 10 10 3.71 0 6.93-2.02 8.66-5.02-7.51-.25-12.09-8.43-8.32-14.96z"/>
+            </svg>
+          </button>
+
+          <div class="sleep-menu" id="sleepMenu">
+            <div class="sleep-header">
+              <span class="sleep-title">⏰ مؤقت النوم</span>
+              <button class="sleep-close" onclick="toggleSleepMenu()">✕</button>
+            </div>
+
+            <div class="sleep-presets">
+              <button class="sleep-preset-btn" onclick="setSleepTimer(5)">٥ دقائق</button>
+              <button class="sleep-preset-btn" onclick="setSleepTimer(15)">١٥ دقيقة</button>
+              <button class="sleep-preset-btn" onclick="setSleepTimer(30)">٣٠ دقيقة</button>
+              <button class="sleep-preset-btn" onclick="setSleepTimer(45)">٤٥ دقيقة</button>
+              <button class="sleep-preset-btn" onclick="setSleepTimer(60)">ساعة</button>
+              <button class="sleep-preset-btn" onclick="setSleepTimer(90)">ساعة ونصف</button>
+              <button class="sleep-preset-btn sleep-stop" onclick="cancelSleepTimer()">إلغاء المؤقت</button>
+            </div>
+
+            <div class="sleep-status" id="sleepStatus" style="display: none;">
+              <span>متبقي:</span>
+              <span id="sleepRemaining">—</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="player-autoscroll-wrap">
+          <button class="player-btn" id="autoScrollBtn" onclick="toggleAutoScrollMenu()" title="التمرير التلقائي">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2L4 10h5v8h6v-8h5L12 2zm0 20l8-8h-5V6h-6v8H4l8 8z"/>
+            </svg>
+          </button>
+
+          <div class="autoscroll-menu" id="autoscrollMenu">
+            <div class="autoscroll-header">
+              <span class="autoscroll-title">📜 التمرير التلقائي</span>
+              <button class="autoscroll-close" onclick="toggleAutoScrollMenu()">✕</button>
+            </div>
+
+            <div class="autoscroll-presets">
+              <button class="preset-btn" data-preset="180" onclick="startScrollWithSpeed(180)">🎯 عادي</button>
+              <button class="preset-btn" data-preset="600" onclick="startScrollWithSpeed(600)">🐢 بطيء</button>
+              <button class="preset-btn" data-preset="1800" onclick="startScrollWithSpeed(1800)">🐌 بطيء جدًا</button>
+              <button class="preset-btn" data-preset="7200" onclick="startScrollWithSpeed(7200)">🧘 أبطأ شيء</button>
+              <button class="preset-btn preset-stop" data-preset="stop" onclick="stopScrollFromMenu()">⏹ إيقاف</button>
+            </div>
+
+            <div class="autoscroll-status" id="autoscrollStatus">
+              <span>الحالة:</span>
+              <span id="autoscrollStatusText">متوقف</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="player-progress">
+        <span class="player-time" id="currentTime">٠:٠٠</span>
+        <input
+          type="range"
+          id="progressBar"
+          class="progress-bar"
+          min="0"
+          max="100"
+          value="0"
+          oninput="seekAudio(this.value)"
+        />
+        <span class="player-time" id="durationTime">٠:٠٠</span>
+      </div>
+
+      <div class="player-volume">
+        <button class="player-btn-small" onclick="toggleMute()" id="muteBtn" title="كتم">
+          <svg id="volumeIcon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+          </svg>
+        </button>
+        <input
+          type="range"
+          id="volumeBar"
+          class="volume-bar"
+          min="0"
+          max="100"
+          value="100"
+          oninput="changeVolume(this.value)"
+        />
+      </div>
+
+      <div class="player-speed">
+        <button class="player-speed-btn" id="speedBtn" onclick="toggleSpeedMenu()">
+          <span id="speedLabel">١x</span>
+        </button>
+        <div class="speed-menu" id="speedMenu">
+          <button onclick="setSpeed(0.75)">٠.٧٥x</button>
+          <button onclick="setSpeed(1)" class="active">١x</button>
+          <button onclick="setSpeed(1.25)">١.٢٥x</button>
+          <button onclick="setSpeed(1.5)">١.٥x</button>
+          <button onclick="setSpeed(2)">٢x</button>
+        </div>
+      </div>
+
+      <button class="player-btn-small" onclick="downloadSurah()" title="تحميل">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+        </svg>
+      </button>
+
+      <button class="player-btn-small" onclick="sharePlayingSurah()" title="مشاركة">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="18" cy="5" r="3"/>
+          <circle cx="6" cy="12" r="3"/>
+          <circle cx="18" cy="19" r="3"/>
+          <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+          <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+        </svg>
+      </button>
+
+      <button class="player-close" onclick="closePlayer()" title="إغلاق">✕</button>
+
+    </div>
+
+    <audio id="audioElement" preload="metadata"></audio>
+  </div>
+
+  <!-- ===== نافذة المحادثة العائمة — v2.1 ===== -->
+  <div class="chat-window" id="chatWindow">
+    <div class="chat-window-header">
+      <div class="friend-avatar" id="chatWindowAvatar" style="width: 40px; height: 40px; font-size: 0.95rem;" onclick="event.stopPropagation()"></div>
+      <div class="chat-window-title" onclick="minimizeChat()">
+        <div class="chat-window-name" id="chatWindowName">محادثة</div>
+        <div class="chat-window-status" id="chatWindowStatus">—</div>
+      </div>
+      <div class="chat-window-actions" onclick="event.stopPropagation()">
+        <button class="chat-window-btn" onclick="showChatMenu(event)" title="خيارات">⋯</button>
+        <button class="chat-window-btn" onclick="minimizeChat()" title="تصغير">—</button>
+        <button class="chat-window-btn close" onclick="closeChat()" title="إغلاق">✕</button>
+      </div>
+    </div>
+
+    <div class="chat-window-body" id="chatWindowBody">
+      <div class="friends-empty" style="border: none; background: transparent;">
+        <span class="friends-empty-icon">👋</span>
+        جارٍ التحميل...
+      </div>
+      <button class="chat-scroll-bottom" id="chatScrollBottom" onclick="document.getElementById('chatWindowBody').scrollTop = 999999" aria-label="أسفل">↓</button>
+    </div>
+
+    <div class="chat-window-footer">
+      <div class="chat-input-wrap">
+        <textarea
+          id="chatInput"
+          class="chat-input"
+          placeholder="اكتب رسالة..."
+          rows="1"
+          oninput="autoResizeChatInput()"
+          onkeydown="handleChatInputKeydown(event)"
+        ></textarea>
+      </div>
+      <button class="chat-send-btn" id="chatSendBtn" onclick="sendChatMessage()" aria-label="إرسال">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+          <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ===== Modal التفسير ===== -->
+  <div id="tafsirModal" class="tafsir-modal">
+    <div class="tafsir-content">
+      <div class="tafsir-header">
+        <div>
+          <h3 id="tafsirTitle" class="tafsir-title"></h3>
+          <p id="tafsirAyah" class="tafsir-ayah"></p>
+        </div>
+        <button class="tafsir-close" onclick="closeTafsir()">✕</button>
+      </div>
+
+      <div class="tafsir-tabs" id="tafsirTabs">
+        <button class="tafsir-tab active" data-tafsir="ar.miqbas" onclick="switchTafsir('ar.miqbas')">ابن كثير</button>
+        <button class="tafsir-tab" data-tafsir="ar.jalalayn" onclick="switchTafsir('ar.jalalayn')">الجلالين</button>
+        <button class="tafsir-tab" data-tafsir="ar.muyassar" onclick="switchTafsir('ar.muyassar')">المیسر</button>
+        <button class="tafsir-tab" data-tafsir="ar.qurtubi" onclick="switchTafsir('ar.qurtubi')">القرطبي</button>
+      </div>
+
+      <div class="tafsir-body">
+        <div id="tafsirText" class="tafsir-text">
+          <div class="loading">جارٍ التحميل...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== إعدادات القراءة ===== -->
+  <div class="settings-panel" id="settingsPanel">
+    <div class="settings-header">
+      <h3 class="settings-title">
+        <span class="settings-title-icon">⚙️</span>
+        <span>إعدادات القراءة</span>
+      </h3>
+      <button class="settings-close" onclick="closeSettings()" aria-label="إغلاق">✕</button>
+    </div>
+
+    <div class="settings-body">
+
+      <div class="settings-group">
+        <div class="settings-group-header">
+          <div class="settings-group-icon">🔤</div>
+          <div>
+            <div class="settings-group-title">حجم الخط</div>
+            <span class="settings-group-desc">تحكم بحجم النص القرآني</span>
+          </div>
+        </div>
+
+        <div class="font-size-display">
+          <button class="font-size-btn" onclick="changeFontSize(-1)" aria-label="تصغير">أ−</button>
+          <div class="font-size-value">
+            <strong id="fontSizeValue">٢٦</strong>
+            <small>بكسل</small>
+          </div>
+          <button class="font-size-btn" onclick="changeFontSize(1)" aria-label="تكبير">أ+</button>
+        </div>
+
+        <div class="font-size-presets">
+          <button class="font-preset-btn" data-size="18" onclick="setFontSize(18)">
+            <span class="preset-size">١٨</span>
+            <span class="preset-label">صغير</span>
+          </button>
+          <button class="font-preset-btn" data-size="22" onclick="setFontSize(22)">
+            <span class="preset-size">٢٢</span>
+            <span class="preset-label">متوسط</span>
+          </button>
+          <button class="font-preset-btn active" data-size="26" onclick="setFontSize(26)">
+            <span class="preset-size">٢٦</span>
+            <span class="preset-label">كبير</span>
+          </button>
+          <button class="font-preset-btn" data-size="32" onclick="setFontSize(32)">
+            <span class="preset-size">٣٢</span>
+            <span class="preset-label">كبير جداً</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="settings-group">
+        <div class="settings-group-header">
+          <div class="settings-group-icon">✍️</div>
+          <div>
+            <div class="settings-group-title">الخط القرآني</div>
+            <span class="settings-group-desc">اختر نوع الخط المناسب لك</span>
+          </div>
+        </div>
+
+        <div class="font-family-list">
+          <button class="font-family-btn active" data-font="amiri-quran" onclick="setFontFamily('amiri-quran')">
+            <div class="font-family-preview">
+              <span class="font-family-name" style="font-family: 'Amiri Quran', serif;">أميري قرآن</span>
+            </div>
+          </button>
+          <button class="font-family-btn" data-font="amiri" onclick="setFontFamily('amiri')">
+            <div class="font-family-preview">
+              <span class="font-family-name" style="font-family: 'Amiri', serif;">أميري</span>
+            </div>
+          </button>
+          <button class="font-family-btn" data-font="scheherazade" onclick="setFontFamily('scheherazade')">
+            <div class="font-family-preview">
+              <span class="font-family-name" style="font-family: 'Scheherazade New', serif;">شهرزاد</span>
+            </div>
+          </button>
+          <button class="font-family-btn" data-font="noto-naskh" onclick="setFontFamily('noto-naskh')">
+            <div class="font-family-preview">
+              <span class="font-family-name" style="font-family: 'Noto Naskh Arabic', serif;">نوتو نسخ</span>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <div class="settings-group">
+        <div class="settings-group-header">
+          <div class="settings-group-icon">📚</div>
+          <div>
+            <div class="settings-group-title">التفسير المفضل</div>
+            <span class="settings-group-desc">اختر التفسير الافتراضي للآيات</span>
+          </div>
+        </div>
+
+        <select class="settings-select" id="preferredTafsir" onchange="setPreferredTafsir(this.value)">
+          <option value="ar.miqbas">ابن كثير</option>
+          <option value="ar.jalalayn">الجلالين</option>
+          <option value="ar.muyassar">المیسر</option>
+          <option value="ar.qurtubi">القرطبي</option>
+        </select>
+      </div>
+
+      <button class="settings-reset" onclick="resetSettings()">
+        <span>↺</span>
+        <span>إعادة الإعدادات الافتراضية</span>
+      </button>
+
+    </div>
+  </div>
+
+  <div class="settings-overlay" id="settingsOverlay" onclick="closeSettings()"></div>
+
+  <!-- ===== Overlays ===== -->
+  <div id="maintenanceOverlay" class="access-overlay">
+    <div class="access-card">
+      <h2>نعود قريبًا</h2>
+      <p id="maintenanceMessage"></p>
+      <button class="auth-action-btn" onclick="openDeveloperPanel()">دخول المطور</button>
+    </div>
+  </div>
+
+  <div id="authGateOverlay" class="access-overlay">
+    <div class="access-card">
+      <h2>مرحبًا بك في طريق الهدى</h2>
+      <p>سجّل الدخول للمتابعة.</p>
+      <button class="auth-action-btn primary" onclick="openAuthModal()">تسجيل الدخول</button>
+      <button class="auth-action-btn" onclick="openDeveloperPanel()">دخول المطور</button>
+    </div>
+  </div>
+
+  <div id="homeAdPopup" class="ad-popup" role="dialog" aria-modal="true" aria-label="إعلان"></div>
+
+  <!-- ===== Modal دخول المطور ===== -->
+  <div class="auth-modal" id="developerLoginModal" role="dialog" aria-modal="true" aria-labelledby="developerLoginTitle">
+    <div class="auth-modal-overlay" id="developerLoginOverlay"></div>
+    <div class="auth-modal-card">
+      <div class="auth-modal-header">
+        <h3 id="developerLoginTitle">دخول المطور</h3>
+        <button id="developerLoginClose" class="auth-close-btn" aria-label="إغلاق">×</button>
+      </div>
+      <p id="developerLoginHint" class="field-help"></p>
+      <form id="developerLoginForm" class="auth-form">
+        <label for="developerLoginPassword">كلمة المرور</label>
+        <input id="developerLoginPassword" type="password" autocomplete="current-password" required />
+        <label id="developerConfirmLabel" for="developerLoginConfirm">تأكيد كلمة المرور</label>
+        <input id="developerLoginConfirm" type="password" autocomplete="new-password" />
+        <p id="developerLoginError" class="form-message" role="alert"></p>
+        <button type="submit" class="auth-submit-btn">متابعة</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== Modal معاينة المحتوى ===== -->
+  <div class="auth-modal" id="contentPreviewModal" role="dialog" aria-modal="true" aria-labelledby="contentPreviewTitle">
+    <div class="auth-modal-overlay" onclick="closeContentPreview()"></div>
+    <div class="auth-modal-card">
+      <div class="auth-modal-header">
+        <h3 id="contentPreviewTitle">معاينة المحتوى</h3>
+        <button class="auth-close-btn" onclick="closeContentPreview()" aria-label="إغلاق">×</button>
+      </div>
+      <p class="field-help">معاينة فقط.</p>
+      <div id="contentPreviewBody"></div>
+    </div>
+  </div>
+
+  <!-- ===== Modal رمز الاستعادة ===== -->
+  <div class="auth-modal" id="recoveryModal" role="dialog" aria-modal="true" aria-labelledby="recoveryTitle">
+    <div class="auth-modal-overlay"></div>
+    <div class="auth-modal-card">
+      <h3 id="recoveryTitle">احفظ رمز الاستعادة</h3>
+      <p>انسخه واحفظه في مكان آمن.</p>
+      <code id="recoveryCodeValue" dir="ltr"></code>
+      <button id="recoveryDone" class="auth-submit-btn" onclick="document.getElementById('recoveryModal').classList.remove('show'); document.getElementById('recoveryCodeValue').textContent = '';">حفظت الرمز</button>
+    </div>
+  </div>
+
+  <!-- ===== Modal الحساب ===== -->
+  <div class="auth-modal" id="authModal" aria-modal="true" role="dialog" aria-labelledby="authModalTitle">
+    <div class="auth-modal-overlay" id="authModalOverlay"></div>
+    <div class="auth-modal-card">
+      <div class="auth-modal-header">
+        <h3 id="authModalTitle">الحساب</h3>
+        <button class="auth-close-btn" id="authModalClose" type="button" aria-label="إغلاق">✕</button>
+      </div>
+      <p class="field-help">حسابك محفوظ في السحابة (Firebase).</p>
+      <div class="auth-tabs" id="authGuestTabs">
+        <button type="button" class="auth-tab active" data-auth-tab="login">تسجيل الدخول</button>
+        <button type="button" class="auth-tab" data-auth-tab="register">إنشاء حساب</button>
+      </div>
+      <div class="auth-tabs hidden" id="authUserTabs">
+        <button type="button" class="auth-tab active" data-auth-tab="profile">ملفي الشخصي</button>
+      </div>
+      <p id="authMessage" class="form-message" role="alert" aria-live="polite"></p>
+
+      <form id="loginForm" class="auth-form">
+        <label for="loginUsername">اسم المستخدم أو البريد الإلكتروني</label>
+        <input id="loginUsername" type="text" autocomplete="username" required />
+        <label for="loginPassword">كلمة المرور</label>
+        <div class="password-field">
+          <input id="loginPassword" type="password" autocomplete="current-password" required />
+          <button type="button" onclick="togglePasswordVisibility('loginPassword', this)" aria-label="إظهار أو إخفاء كلمة المرور">إظهار</button>
+        </div>
+        <button type="submit" class="auth-submit-btn">دخول</button>
+        <button type="button" class="auth-action-btn" onclick="openDeveloperPanel()">دخول لوحة المطور</button>
+      </form>
+
+      <form id="registerForm" class="auth-form hidden">
+        <label for="registerFullName">الاسم الكامل</label>
+        <input id="registerFullName" type="text" maxlength="60" autocomplete="name" required />
+        <label for="registerUsername">اسم المستخدم</label>
+        <input id="registerUsername" type="text" pattern="[A-Za-z0-9_]{3,20}" title="3–20 حرفًا إنجليزيًا أو رقمًا أو شرطة سفلية" autocomplete="username" required />
+        <label for="registerEmail">البريد الإلكتروني (اختياري)</label>
+        <input id="registerEmail" type="email" autocomplete="email" maxlength="120" />
+        <label for="registerPassword">كلمة المرور</label>
+        <div class="password-field">
+          <input id="registerPassword" type="password" minlength="10" maxlength="128" autocomplete="new-password" required />
+          <button type="button" onclick="togglePasswordVisibility('registerPassword', this)">إظهار</button>
+        </div>
+        <p class="field-help">10 أحرف على الأقل. يُفضّل استخدام عبارة طويلة.</p>
+        <label for="registerConfirmPassword">تأكيد كلمة المرور</label>
+        <input id="registerConfirmPassword" type="password" autocomplete="new-password" required />
+        <label for="registerBirthDate">تاريخ الميلاد</label>
+        <input id="registerBirthDate" type="date" autocomplete="bday" required />
+        <div class="auth-gender-row">
+          <label><input type="radio" name="registerGender" value="male" checked /> ذكر</label>
+          <label><input type="radio" name="registerGender" value="female" /> أنثى</label>
+        </div>
+        <button type="submit" class="auth-submit-btn">إنشاء الحساب</button>
+      </form>
+
+      <form id="profileForm" class="auth-form hidden">
+        <label for="profileEditName">الاسم الكامل</label>
+        <input id="profileEditName" maxlength="60" autocomplete="name" required />
+
+        <label for="profileEditEmail">البريد الإلكتروني</label>
+        <input id="profileEditEmail" type="email" autocomplete="email" maxlength="120" />
+
+        <label for="profileEditBio">نبذة عنك</label>
+        <textarea id="profileEditBio" rows="2" maxlength="160"></textarea>
+
+        <label for="profileEditBirthDate">تاريخ الميلاد</label>
+        <input id="profileEditBirthDate" type="date" required />
+
+        <div class="auth-gender-row">
+          <label><input type="radio" name="profileGender" value="male" /> ذكر</label>
+          <label><input type="radio" name="profileGender" value="female" /> أنثى</label>
+        </div>
+
+        <button type="submit" class="auth-submit-btn">حفظ التغييرات</button>
+
+        <div class="profile-stats-section">
+          <div class="profile-stats-header">
+            <span class="profile-stats-icon">📊</span>
+            <div>
+              <div class="profile-stats-title">إحصائياتي</div>
+              <div class="profile-stats-subtitle">تقدمك في القراءة والاستماع</div>
+            </div>
+          </div>
+
+          <div class="profile-stats-grid">
+            <div class="profile-stat-card">
+              <div class="profile-stat-icon">📖</div>
+              <div class="profile-stat-value" id="profileStatAyahs">٠</div>
+              <div class="profile-stat-label">آيات قرأت</div>
+            </div>
+            <div class="profile-stat-card">
+              <div class="profile-stat-icon">🎧</div>
+              <div class="profile-stat-value" id="profileStatMinutes">٠</div>
+              <div class="profile-stat-label">دقائق استماع</div>
+            </div>
+            <div class="profile-stat-card">
+              <div class="profile-stat-icon">📚</div>
+              <div class="profile-stat-value" id="profileStatSurahs">٠</div>
+              <div class="profile-stat-label">سور استمعت</div>
+            </div>
+            <div class="profile-stat-card">
+              <div class="profile-stat-icon">✅</div>
+              <div class="profile-stat-value" id="profileStatCompleted">٠</div>
+              <div class="profile-stat-label">سور مكتملة</div>
+            </div>
+            <div class="profile-stat-card">
+              <div class="profile-stat-icon">🔥</div>
+              <div class="profile-stat-value" id="profileStatStreak">٠</div>
+              <div class="profile-stat-label">أيام متتالية</div>
+            </div>
+          </div>
+
+          <div class="profile-stats-favorites">
+            <div class="profile-fav-card">
+              <div class="profile-fav-label">⭐ أكثر سورة</div>
+              <div class="profile-fav-value" id="profileStatTopSurah">—</div>
+            </div>
+            <div class="profile-fav-card">
+              <div class="profile-fav-label">🎙️ أكثر قارئ</div>
+              <div class="profile-fav-value" id="profileStatTopReciter">—</div>
+            </div>
+          </div>
+
+          <div class="profile-stats-actions">
+            <button type="button" class="profile-stats-btn primary" id="profileStatsViewBtn">
+              <span>📊</span>
+              <span>عرض التفاصيل الكاملة</span>
+            </button>
+            <button type="button" class="profile-stats-btn danger" id="profileStatsResetBtn">
+              <span>🗑️</span>
+              <span>إعادة تعيين</span>
+            </button>
+          </div>
+        </div>
+
+        <button id="deleteAccountBtn" type="button" class="auth-action-btn danger">حذف حسابي</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== Modal صورة الحساب ===== -->
+  <div class="auth-modal" id="avatarModal" role="dialog" aria-modal="true" aria-labelledby="avatarModalTitle">
+    <div class="auth-modal-overlay" onclick="closeAvatarModal()"></div>
+    <div class="auth-modal-card">
+      <div class="auth-modal-header">
+        <h3 id="avatarModalTitle">📷 صورة الحساب</h3>
+        <button class="auth-close-btn" onclick="closeAvatarModal()" aria-label="إغلاق">✕</button>
+      </div>
+
+      <div class="avatar-preview-wrap">
+        <img id="avatarPreview" class="avatar-preview-img" alt="معاينة الصورة" />
+        <div id="avatarEmptyState" class="avatar-empty-state">لا توجد صورة</div>
+      </div>
+
+      <div class="avatar-actions">
+        <label class="avatar-upload-btn">
+          <input type="file" accept="image/*" onchange="handleAvatarUpload(event)" />
+          <span>📁 اختر صورة</span>
+        </label>
+        <button class="avatar-remove-btn" onclick="removeAvatar()">🗑️ حذف الصورة</button>
+      </div>
+
+      <p class="field-help" style="text-align: center;">الحجم الأقصى 500KB — سيتم قصها مربعة تلقائياً</p>
+    </div>
+  </div>
+
+   <!-- ===== Scripts ===== -->
+  <script src="js/health.js?v=2.0.0"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/firebase.js?v=3.0.0"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/lang.js"></script>
+  <script src="js/settings.js?v=3.1.0"></script>
+  <script src="js/stats.js?v=3.0.0"></script>
+  <script src="js/sync.js?v=1.0.0"></script>
+  <script src="js/features.js?v=3.0.0"></script>
+  <script src="js/home.js?v=2.2.0"></script>
+  <script src="js/security.js"></script>
+  <script src="js/developer.js?v=6.0.0"></script>
+  <script src="js/qibla.js?v=3.0.0"></script>
+  <script src="js/names.js?v=2.0.0"></script>
+  <script src="js/auth.js?v=6.0.0"></script>
+  <script src="js/quran.js?v=2.0.0"></script>
+  <script src="js/listen.js?v=4.0.0"></script>
+  <script src="js/share.js"></script>
+  <script src="js/prayer.js"></script>
+  <script src="js/ziyarat.js?v=1.2.0"></script>
+  <script src="js/istikhara.js?v=1.0.0"></script>
+  <script src="js/notifications.js?v=5.0.0"></script>
+  <script src="js/friends.js?v=3.0.0"></script>
+  <script src="js/pwa.js?v=4.0.0"></script>
+  <script src="js/indexeddb.js?v=1.0.0"></script>
+  <script src="js/analytics.js?v=1.0.0"></script>
+</body>
+</html>

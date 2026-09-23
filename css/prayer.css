@@ -1,0 +1,800 @@
+/* ===== صفحة مواقيت الصلاة ===== */
+#prayerView {
+  padding-bottom: 40px;
+}
+
+/* ===== بطاقة الموقع ===== */
+.prayer-location-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  background: var(--card-bg);
+  border: 1.5px solid var(--card-border);
+  border-radius: 16px;
+  margin-bottom: 16px;
+  backdrop-filter: blur(8px);
+}
+
+.prayer-location-icon {
+  font-size: 1.5rem;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(212, 175, 55, 0.12);
+  border: 1.5px solid rgba(212, 175, 55, 0.4);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.prayer-location-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.prayer-location-city {
+  font-family: var(--font-ui);
+  font-size: 1.05rem;
+  color: var(--cream);
+  font-weight: 700;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.prayer-location-date {
+  font-family: var(--font-ui);
+  font-size: 0.82rem;
+  color: rgba(245, 241, 232, 0.6);
+}
+
+html[data-theme="light"] .prayer-location-date {
+  color: rgba(26, 26, 26, 0.6);
+}
+
+.prayer-location-btn {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(212, 175, 55, 0.1);
+  border: 1.5px solid rgba(212, 175, 55, 0.4);
+  border-radius: 50%;
+  color: var(--gold);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.prayer-location-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.prayer-location-btn:hover {
+  background: var(--gold);
+  color: var(--green-deep);
+  transform: scale(1.08);
+}
+
+html[data-theme="dark"] .prayer-location-btn:hover {
+  color: #0a0a0a;
+}
+
+html[data-theme="light"] .prayer-location-btn:hover {
+  color: #ffffff;
+}
+
+/* ===== بطاقة الصلاة الجاية ===== */
+.prayer-next-card {
+  position: relative;
+  padding: 28px 24px;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(212, 175, 55, 0.05));
+  border: 1.5px solid rgba(212, 175, 55, 0.4);
+  border-radius: 20px;
+  margin-bottom: 20px;
+  text-align: center;
+  overflow: hidden;
+  box-shadow: 0 0 30px rgba(212, 175, 55, 0.15);
+}
+
+.prayer-next-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 0%, rgba(212, 175, 55, 0.15), transparent 70%);
+  pointer-events: none;
+}
+
+.prayer-next-label {
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  color: rgba(245, 241, 232, 0.6);
+  margin-bottom: 8px;
+  position: relative;
+}
+
+html[data-theme="light"] .prayer-next-label {
+  color: rgba(26, 26, 26, 0.6);
+}
+
+.prayer-next-name {
+  font-family: var(--font-ui);
+  font-size: clamp(1.8rem, 5vw, 2.5rem);
+  color: var(--gold);
+  font-weight: 700;
+  margin-bottom: 8px;
+  position: relative;
+  letter-spacing: 1px;
+}
+
+.prayer-next-time {
+  font-family: var(--font-ui);
+  font-size: 1.5rem;
+  color: var(--cream);
+  font-weight: 700;
+  margin-bottom: 10px;
+  position: relative;
+  direction: ltr;
+}
+
+.prayer-next-remaining {
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  color: var(--gold-soft);
+  font-weight: 600;
+  padding: 8px 18px;
+  background: rgba(212, 175, 55, 0.12);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 50px;
+  display: inline-block;
+  position: relative;
+  direction: ltr;
+}
+
+/* ===== قائمة المواقيت ===== */
+.prayer-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.prayer-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  background: var(--card-bg);
+  border: 1.5px solid var(--card-border);
+  border-radius: 14px;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(8px);
+  animation: prayerFadeUp 0.4s ease forwards;
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+@keyframes prayerFadeUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.prayer-item:hover {
+  border-color: var(--gold);
+  background: var(--card-hover);
+  transform: translateX(-4px);
+}
+
+html[dir="ltr"] .prayer-item:hover {
+  transform: translateX(4px);
+}
+
+.prayer-item.active {
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.18), rgba(212, 175, 55, 0.08));
+  border-color: var(--gold);
+  box-shadow: 0 0 25px rgba(212, 175, 55, 0.25);
+}
+
+.prayer-item.disabled {
+  opacity: 0.5;
+}
+
+.prayer-item-icon {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(212, 175, 55, 0.12);
+  border: 1.5px solid rgba(212, 175, 55, 0.4);
+  border-radius: 50%;
+  font-size: 1.3rem;
+}
+
+.prayer-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.prayer-item-name {
+  font-family: var(--font-ui);
+  font-size: 1.05rem;
+  color: var(--cream);
+  font-weight: 600;
+  margin-bottom: 3px;
+}
+
+.prayer-item-time {
+  font-family: var(--font-ui);
+  font-size: 1.3rem;
+  color: var(--gold);
+  font-weight: 700;
+  direction: ltr;
+}
+
+/* Toggle Switch */
+.prayer-toggle {
+  position: relative;
+  width: 52px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.prayer-toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.prayer-toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background: rgba(245, 241, 232, 0.15);
+  border: 1.5px solid rgba(212, 175, 55, 0.3);
+  border-radius: 50px;
+  transition: all 0.3s ease;
+}
+
+html[data-theme="light"] .prayer-toggle-slider {
+  background: rgba(26, 26, 26, 0.15);
+}
+
+.prayer-toggle-slider::before {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  left: 3px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(245, 241, 232, 0.7);
+  border-radius: 50%;
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.prayer-toggle input:checked + .prayer-toggle-slider {
+  background: var(--gold);
+  border-color: var(--gold);
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+}
+
+.prayer-toggle input:checked + .prayer-toggle-slider::before {
+  transform: translateY(-50%) translateX(24px);
+  background: var(--green-deep);
+}
+
+html[data-theme="dark"] .prayer-toggle input:checked + .prayer-toggle-slider::before {
+  background: #0a0a0a;
+}
+
+html[data-theme="light"] .prayer-toggle input:checked + .prayer-toggle-slider::before {
+  background: #ffffff;
+}
+
+/* ===== الإعدادات ===== */
+.prayer-settings {
+  padding: 20px;
+  background: var(--card-bg);
+  border: 1.5px solid var(--card-border);
+  border-radius: 16px;
+  margin-bottom: 16px;
+  backdrop-filter: blur(8px);
+}
+
+.prayer-settings-title {
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  color: var(--gold);
+  font-weight: 700;
+  margin-bottom: 18px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.prayer-setting-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+}
+
+.prayer-setting-item:last-of-type {
+  border-bottom: none;
+  margin-bottom: 16px;
+}
+
+.prayer-setting-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  color: var(--cream);
+  font-weight: 600;
+}
+
+.prayer-setting-label span:first-child {
+  font-size: 1.1rem;
+}
+
+.prayer-setting-select {
+  background: var(--input-bg);
+  border: 1.5px solid var(--input-border);
+  border-radius: 10px;
+  color: var(--cream);
+  padding: 8px 12px;
+  font-family: var(--font-ui);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.3s ease;
+  min-width: 140px;
+  max-width: 180px;
+}
+
+.prayer-setting-select:hover,
+.prayer-setting-select:focus {
+  border-color: var(--gold);
+}
+
+.prayer-setting-select option {
+  background: var(--green-deep);
+  color: var(--cream);
+}
+
+html[data-theme="light"] .prayer-setting-select option {
+  background: #ffffff;
+  color: #1a1a1a;
+}
+
+/* ===== صف الأزرار ===== */
+.prayer-buttons-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.prayer-buttons-row > button {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+/* زر تفعيل الإشعارات */
+.prayer-notify-btn {
+  width: 100%;
+  padding: 14px;
+  background: var(--gold);
+  border: none;
+  border-radius: 12px;
+  color: var(--green-deep);
+  cursor: pointer;
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  font-weight: 700;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.35);
+}
+
+html[data-theme="dark"] .prayer-notify-btn {
+  color: #0a0a0a;
+}
+
+html[data-theme="light"] .prayer-notify-btn {
+  color: #ffffff;
+}
+
+.prayer-notify-btn:hover {
+  background: var(--gold-soft);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
+}
+
+.prayer-notify-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ===== زر إلغاء الإشعارات ===== */
+.prayer-cancel-btn {
+  padding: 14px;
+  background: rgba(192, 57, 43, 0.15);
+  border: 1.5px solid rgba(192, 57, 43, 0.5);
+  border-radius: 12px;
+  color: #ff8a7a;
+  cursor: pointer;
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  font-weight: 700;
+  transition: all 0.3s ease;
+}
+
+.prayer-cancel-btn:hover {
+  background: #c0392b;
+  color: white;
+  border-color: #c0392b;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(192, 57, 43, 0.4);
+}
+
+.prayer-notify-status {
+  padding: 12px;
+  background: rgba(46, 139, 87, 0.15);
+  border: 1px solid rgba(46, 139, 87, 0.4);
+  border-radius: 10px;
+  text-align: center;
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  color: #7fe8a8;
+  font-weight: 600;
+  margin-top: 12px;
+}
+
+/* ===== زر اختبار الأذان ===== */
+.prayer-test-btn {
+  width: 100%;
+  padding: 14px;
+  background: rgba(212, 175, 55, 0.1);
+  border: 1.5px solid rgba(212, 175, 55, 0.4);
+  border-radius: 12px;
+  color: var(--gold);
+  cursor: pointer;
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  font-weight: 700;
+  transition: all 0.3s ease;
+}
+
+.prayer-test-btn:hover {
+  background: rgba(212, 175, 55, 0.2);
+  border-color: var(--gold);
+  transform: translateY(-2px);
+}
+
+/* ===== زر إلغاء اختبار الأذان ===== */
+.prayer-stop-btn {
+  padding: 14px;
+  background: rgba(192, 57, 43, 0.15);
+  border: 1.5px solid rgba(192, 57, 43, 0.5);
+  border-radius: 12px;
+  color: #ff8a7a;
+  cursor: pointer;
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  font-weight: 700;
+  transition: all 0.3s ease;
+}
+
+.prayer-stop-btn:hover {
+  background: #c0392b;
+  color: white;
+  border-color: #c0392b;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(192, 57, 43, 0.4);
+}
+
+/* ===== 🔔 زر اختبار إشعار الأذان ===== */
+.prayer-test-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.prayer-test-notify-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px;
+  background: rgba(212, 175, 55, 0.15);
+  border: 1.5px solid rgba(212, 175, 55, 0.5);
+  border-radius: 12px;
+  color: var(--gold);
+  cursor: pointer;
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  font-weight: 700;
+  transition: all 0.3s ease;
+}
+
+.prayer-test-notify-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.prayer-test-notify-btn:hover {
+  background: rgba(212, 175, 55, 0.25);
+  border-color: var(--gold);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.3);
+}
+
+.prayer-test-notify-btn:active {
+  transform: translateY(0);
+}
+
+/* ===== Modal تغيير الموقع ===== */
+.location-modal {
+  position: fixed;
+  inset: 0;
+  background: var(--modal-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 3000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.location-modal.open {
+  display: flex;
+  opacity: 1;
+}
+
+.location-modal-content {
+  background: linear-gradient(135deg, var(--player-bg-start), var(--player-bg-end));
+  border: 1.5px solid rgba(212, 175, 55, 0.4);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 500px;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 24px;
+  transform: scale(0.92);
+  transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.6);
+}
+
+.location-modal.open .location-modal-content {
+  transform: scale(1);
+}
+
+.location-modal-title {
+  font-family: var(--font-ui);
+  font-size: 1.2rem;
+  color: var(--gold);
+  font-weight: 700;
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.location-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  background: var(--card-bg);
+  border: 1.5px solid var(--card-border);
+  border-radius: 12px;
+  color: var(--cream);
+  cursor: pointer;
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  margin-bottom: 10px;
+  text-align: right;
+}
+
+html[dir="ltr"] .location-btn {
+  text-align: left;
+}
+
+.location-btn:hover {
+  border-color: var(--gold);
+  background: var(--card-hover);
+  transform: translateX(-4px);
+}
+
+html[dir="ltr"] .location-btn:hover {
+  transform: translateX(4px);
+}
+
+.location-btn-icon {
+  font-size: 1.4rem;
+}
+
+.location-manual-wrap {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.location-manual-label {
+  font-family: var(--font-ui);
+  font-size: 0.88rem;
+  color: rgba(245, 241, 232, 0.7);
+  margin-bottom: 10px;
+  display: block;
+}
+
+html[data-theme="light"] .location-manual-label {
+  color: rgba(26, 26, 26, 0.7);
+}
+
+.location-manual-input {
+  width: 100%;
+  padding: 12px 16px;
+  background: var(--input-bg);
+  border: 1.5px solid var(--input-border);
+  border-radius: 10px;
+  color: var(--cream);
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  outline: none;
+  margin-bottom: 10px;
+  transition: all 0.3s ease;
+}
+
+.location-manual-input:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.25);
+}
+
+.location-manual-input::placeholder {
+  color: rgba(245, 241, 232, 0.4);
+}
+
+html[data-theme="light"] .location-manual-input::placeholder {
+  color: rgba(26, 26, 26, 0.4);
+}
+
+.location-save-btn {
+  width: 100%;
+  padding: 12px;
+  background: var(--gold);
+  border: none;
+  border-radius: 10px;
+  color: var(--green-deep);
+  cursor: pointer;
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  font-weight: 700;
+  transition: all 0.3s ease;
+}
+
+html[data-theme="dark"] .location-save-btn {
+  color: #0a0a0a;
+}
+
+html[data-theme="light"] .location-save-btn {
+  color: #ffffff;
+}
+
+.location-save-btn:hover {
+  background: var(--gold-soft);
+  transform: translateY(-2px);
+}
+
+.location-close-btn {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(212, 175, 55, 0.1);
+  border: 1.5px solid rgba(212, 175, 55, 0.4);
+  color: var(--gold);
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.3s ease;
+}
+
+html[dir="ltr"] .location-close-btn {
+  left: auto;
+  right: 16px;
+}
+
+.location-close-btn:hover {
+  background: var(--gold);
+  color: var(--green-deep);
+}
+
+/* ===== جوال ===== */
+@media (max-width: 600px) {
+  .prayer-next-card {
+    padding: 22px 18px;
+  }
+
+  .prayer-next-name {
+    font-size: 1.5rem;
+  }
+
+  .prayer-next-time {
+    font-size: 1.3rem;
+  }
+
+  .prayer-item {
+    padding: 12px 14px;
+    gap: 12px;
+  }
+
+  .prayer-item-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 1.1rem;
+  }
+
+  .prayer-item-name {
+    font-size: 0.95rem;
+  }
+
+  .prayer-item-time {
+    font-size: 1.15rem;
+  }
+
+  .prayer-toggle {
+    width: 46px;
+    height: 26px;
+  }
+
+  .prayer-toggle-slider::before {
+    width: 18px;
+    height: 18px;
+  }
+
+  .prayer-toggle input:checked + .prayer-toggle-slider::before {
+    transform: translateY(-50%) translateX(20px);
+  }
+
+  .prayer-setting-item {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .prayer-setting-select {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .prayer-buttons-row {
+    flex-direction: column;
+  }
+
+  .prayer-buttons-row > button {
+    width: 100%;
+  }
+
+  .location-btn {
+    font-size: 0.88rem;
+    padding: 12px 14px;
+  }
+}

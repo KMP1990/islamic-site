@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0d3b2e" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230d3b2e'/%3E%3Ctext x='50' y='68' font-size='60' text-anchor='middle' fill='%23d4af37' font-family='serif'%3E﷽%3C/text%3E%3C/svg%3E" />
+  <title data-i18n="page_title">طريق الهدى | موقع إسلامي</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="طريق الهدى" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="application-name" content="طريق الهدى" />
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='80' fill='%230d3b2e'/%3E%3Ctext x='256' y='340' font-size='280' text-anchor='middle' fill='%23d4af37' font-family='serif'%3E﷽%3C/text%3E%3C/svg%3E" />
+
+  <!-- OneSignal -->
+  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+  <script>
+    const oneSignalOrigin = 'https://dynamic-cactus-a5fb04.netlify.app';
+    window.OneSignalDeferred = window.OneSignalDeferred || [];
+    OneSignalDeferred.push(async function(OneSignal) {
+      if (window.location.origin !== oneSignalOrigin) {
+        console.info('OneSignal disabled on this origin:', window.location.origin);
+        return;
+      }
+
+      await OneSignal.init({
+        appId: "a666e4cb-b2ed-49aa-8dd9-46f0cf962e3a",
+        serviceWorkerPath: "service-worker.js",
+        serviceWorkerParam: { scope: "/" },
+        notifyButton: {
+          enable: false
+        },
+        allowLocalhostAsSecureOrigin: true,
+      });
+    });
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Amiri:wght@400;700&family=Scheherazade+New:wght@400;700&family=Noto+Naskh+Arabic:wght@400;600;700&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/global.css" />
+  <link rel="stylesheet" href="css/landing.css" />
+  <link rel="stylesheet" href="css/pwa.css" />
+</head>
+<body>
+
+  <div class="landing-container">
+    <div class="bg-decoration"></div>
+
+    <div class="zakhrafa-bg">
+      <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+        <g fill="none" stroke="currentColor" stroke-width="1.2">
+          <rect x="100" y="100" width="200" height="200" />
+          <rect x="100" y="100" width="200" height="200" transform="rotate(45 200 200)" />
+          <rect x="130" y="130" width="140" height="140" />
+          <rect x="130" y="130" width="140" height="140" transform="rotate(45 200 200)" />
+          <circle cx="200" cy="200" r="160" />
+          <circle cx="200" cy="200" r="120" />
+          <circle cx="200" cy="200" r="80" />
+          <circle cx="200" cy="200" r="40" />
+          <line x1="200" y1="20"  x2="200" y2="60"  />
+          <line x1="200" y1="340" x2="200" y2="380" />
+          <line x1="20"  y1="200" x2="60"  y2="200" />
+          <line x1="340" y1="200" x2="380" y2="200" />
+          <line x1="80"  y1="80"  x2="105" y2="105" />
+          <line x1="320" y1="320" x2="295" y2="295" />
+          <line x1="320" y1="80"  x2="295" y2="105" />
+          <line x1="80"  y1="320" x2="105" y2="295" />
+        </g>
+      </svg>
+    </div>
+
+    <div class="zakhrafa-bg zakhrafa-2">
+      <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+        <g fill="none" stroke="currentColor" stroke-width="1">
+          <rect x="100" y="100" width="200" height="200" />
+          <rect x="100" y="100" width="200" height="200" transform="rotate(45 200 200)" />
+          <circle cx="200" cy="200" r="140" />
+          <circle cx="200" cy="200" r="100" />
+        </g>
+      </svg>
+    </div>
+
+    <div class="theme-switcher">
+      <button class="theme-btn" id="themeBtn" onclick="toggleTheme()" aria-label="Theme">
+        <span class="theme-icon" id="themeIcon">🌙</span>
+      </button>
+    </div>
+
+    <div class="lang-switcher">
+      <div class="lang-btn">
+        <span class="lang-option" data-lang="ar" onclick="setLang('ar')">عربي</span>
+        <span class="lang-option" data-lang="en" onclick="setLang('en')">EN</span>
+        <span class="lang-slider"></span>
+      </div>
+    </div>
+
+    <main class="landing-content">
+      <div class="welcome-box">
+        <h1 class="site-name fade-up" data-i18n="site_name">طريق الهدى</h1>
+        <p class="welcome-text fade-up delay-1" data-i18n="welcome">
+          السلام عليكم ورحمة الله وبركاته
+        </p>
+        <p class="verse fade-up delay-2" data-i18n="verse">
+          ﴿ وَقُل رَّبِّ زِدْنِي عِلْمًا ﴾
+        </p>
+      </div>
+
+      <button class="enter-btn fade-up delay-3" onclick="enterSite()">
+        <span data-i18n="enter_btn">دخول</span>
+      </button>
+    </main>
+
+    <footer class="site-footer">
+      <p class="footer-text">
+        <span data-i18n="made_by">صنع بواسطة ZaidAli</span>
+      </p>
+    </footer>
+  </div>
+
+  <script src="js/theme.js"></script>
+  <script src="js/health.js?v=1.2.0"></script>
+  <script src="js/lang.js"></script>
+  <script src="js/landing.js"></script>
+  <script src="js/pwa.js?v=1.1.0"></script>
+</body>
+</html>

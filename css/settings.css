@@ -1,0 +1,548 @@
+/* ============================================
+   إعدادات القراءة — تصميم هندسي متطور v3.0
+   ============================================ */
+
+.settings-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(420px, 92vw);
+  background: linear-gradient(180deg,
+    var(--sidebar-bg-start) 0%,
+    var(--sidebar-bg-end) 100%);
+  border-left: 1.5px solid rgba(212, 175, 55, 0.4);
+  z-index: 3500;
+  transform: translateX(105%);
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: flex;
+  flex-direction: column;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  box-shadow: -20px 0 60px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+
+html[dir="ltr"] .settings-panel {
+  right: auto;
+  left: 0;
+  transform: translateX(-105%);
+  border-left: none;
+  border-right: 1.5px solid rgba(212, 175, 55, 0.4);
+  box-shadow: 20px 0 60px rgba(0, 0, 0, 0.5);
+}
+
+.settings-panel.open {
+  transform: translateX(0);
+}
+
+/* ===== رأس اللوحة ===== */
+.settings-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 24px 20px;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.settings-header::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.08), transparent 50%);
+  pointer-events: none;
+}
+
+.settings-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 24px;
+  right: 24px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity: 0.6;
+}
+
+.settings-title {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font: 800 1.15rem var(--font-ui);
+  color: var(--gold);
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+.settings-title-icon {
+  font-size: 1.4rem;
+  animation: iconPulse 3s ease-in-out infinite;
+}
+
+@keyframes iconPulse {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  50%      { transform: scale(1.1) rotate(10deg); }
+}
+
+.settings-close {
+  position: relative;
+  z-index: 1;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(212, 175, 55, 0.08);
+  border: 1.5px solid rgba(212, 175, 55, 0.3);
+  border-radius: 12px;
+  color: var(--gold);
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 700;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.settings-close:hover {
+  background: linear-gradient(135deg, #c0392b, #e74c3c);
+  color: white;
+  border-color: #c0392b;
+  transform: rotate(90deg) scale(1.05);
+  box-shadow: 0 8px 24px rgba(192, 57, 43, 0.4);
+}
+
+/* ===== محتوى اللوحة (scrollable) ===== */
+.settings-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 24px 28px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--gold) transparent;
+}
+
+.settings-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.settings-body::-webkit-scrollbar-track {
+  background: rgba(212, 175, 55, 0.05);
+  border-radius: 10px;
+}
+
+.settings-body::-webkit-scrollbar-thumb {
+  background: var(--gold);
+  border-radius: 10px;
+}
+
+/* ===== مجموعة إعدادات ===== */
+.settings-group {
+  position: relative;
+  margin-bottom: 24px;
+  padding: 20px;
+  background: rgba(212, 175, 55, 0.04);
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  border-radius: 18px;
+  transition: all 0.3s ease;
+}
+
+.settings-group:hover {
+  border-color: rgba(212, 175, 55, 0.3);
+  background: rgba(212, 175, 55, 0.06);
+}
+
+.settings-group-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.12);
+}
+
+.settings-group-icon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(212, 175, 55, 0.05));
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 10px;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.settings-group-title {
+  font: 700 0.95rem var(--font-ui);
+  color: var(--gold);
+  letter-spacing: 0.3px;
+}
+
+.settings-group-desc {
+  display: block;
+  font: 500 0.72rem var(--font-ui);
+  color: rgba(245, 241, 232, 0.5);
+  margin-top: 2px;
+}
+
+html[data-theme="light"] .settings-group-desc {
+  color: rgba(26, 26, 26, 0.55);
+}
+
+/* ===== حجم الخط ===== */
+.font-size-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 18px;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 14px;
+  border: 1px dashed rgba(212, 175, 55, 0.25);
+}
+
+.font-size-btn {
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(212, 175, 55, 0.05));
+  border: 1.5px solid rgba(212, 175, 55, 0.4);
+  border-radius: 14px;
+  color: var(--gold);
+  cursor: pointer;
+  font: 800 1.2rem var(--font-ui);
+  transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+  flex-shrink: 0;
+}
+
+.font-size-btn:hover {
+  background: linear-gradient(135deg, var(--gold), var(--gold-soft));
+  color: #0d3b2e;
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 10px 25px rgba(212, 175, 55, 0.5);
+}
+
+.font-size-btn:active {
+  transform: translateY(0) scale(0.95);
+}
+
+html[data-theme="dark"] .font-size-btn:hover { color: #0a0a0a; }
+html[data-theme="light"] .font-size-btn:hover { color: #ffffff; }
+
+.font-size-value {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 90px;
+  padding: 8px 16px;
+  background: rgba(212, 175, 55, 0.1);
+  border: 1.5px solid rgba(212, 175, 55, 0.35);
+  border-radius: 14px;
+}
+
+.font-size-value strong {
+  font: 800 1.75rem var(--font-ui);
+  color: var(--gold);
+  line-height: 1;
+}
+
+.font-size-value small {
+  font: 500 0.68rem var(--font-ui);
+  color: rgba(245, 241, 232, 0.5);
+  letter-spacing: 0.5px;
+}
+
+html[data-theme="light"] .font-size-value small {
+  color: rgba(26, 26, 26, 0.5);
+}
+
+/* أزرار الحجم المسبق */
+.font-size-presets {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.font-preset-btn {
+  position: relative;
+  padding: 12px 6px;
+  background: rgba(0, 0, 0, 0.15);
+  border: 1.5px solid rgba(212, 175, 55, 0.2);
+  border-radius: 12px;
+  color: var(--cream);
+  cursor: pointer;
+  font: 700 0.75rem var(--font-ui);
+  transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.font-preset-btn .preset-size {
+  font: 800 1.05rem var(--font-ui);
+  color: var(--gold);
+  line-height: 1;
+}
+
+.font-preset-btn .preset-label {
+  font: 600 0.68rem var(--font-ui);
+  opacity: 0.7;
+}
+
+.font-preset-btn:hover {
+  border-color: var(--gold);
+  background: rgba(212, 175, 55, 0.08);
+  transform: translateY(-2px);
+}
+
+.font-preset-btn.active {
+  background: linear-gradient(135deg, var(--gold), var(--gold-soft));
+  color: #0d3b2e;
+  border-color: var(--gold);
+  box-shadow: 0 8px 22px rgba(212, 175, 55, 0.5);
+}
+
+.font-preset-btn.active .preset-size,
+.font-preset-btn.active .preset-label {
+  color: #0d3b2e;
+  opacity: 1;
+}
+
+html[data-theme="dark"] .font-preset-btn.active,
+html[data-theme="dark"] .font-preset-btn.active .preset-size,
+html[data-theme="dark"] .font-preset-btn.active .preset-label {
+  color: #0a0a0a;
+}
+
+html[data-theme="light"] .font-preset-btn.active,
+html[data-theme="light"] .font-preset-btn.active .preset-size,
+html[data-theme="light"] .font-preset-btn.active .preset-label {
+  color: #ffffff;
+}
+
+/* ===== الخط القرآني ===== */
+.font-family-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.font-family-btn {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: rgba(0, 0, 0, 0.15);
+  border: 1.5px solid rgba(212, 175, 55, 0.2);
+  border-radius: 14px;
+  color: var(--cream);
+  cursor: pointer;
+  transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+  text-align: start;
+}
+
+.font-family-btn::before {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  transform: translateY(-50%) scale(0);
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0d3b2e;
+  color: var(--gold);
+  border-radius: 50%;
+  font-size: 0.75rem;
+  font-weight: 800;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+html[dir="ltr"] .font-family-btn::before {
+  right: auto;
+  left: 16px;
+}
+
+.font-family-btn.active::before {
+  transform: translateY(-50%) scale(1);
+}
+
+.font-family-preview {
+  flex: 1;
+  min-width: 0;
+}
+
+.font-family-name {
+  display: block;
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: var(--cream);
+  line-height: 1.4;
+}
+
+.font-family-btn:hover {
+  border-color: var(--gold);
+  background: rgba(212, 175, 55, 0.08);
+  transform: translateX(-4px);
+}
+
+html[dir="ltr"] .font-family-btn:hover {
+  transform: translateX(4px);
+}
+
+.font-family-btn.active {
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(212, 175, 55, 0.06));
+  border-color: var(--gold);
+  box-shadow: 0 8px 22px rgba(212, 175, 55, 0.25);
+}
+
+/* ===== التفسير المفضل ===== */
+.settings-select {
+  width: 100%;
+  padding: 14px 18px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1.5px solid rgba(212, 175, 55, 0.25);
+  border-radius: 14px;
+  color: var(--cream);
+  font: 600 0.92rem var(--font-ui);
+  cursor: pointer;
+  outline: none;
+  transition: all 0.3s ease;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d4af37' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: left 16px center;
+  background-size: 18px;
+  padding-left: 48px;
+}
+
+html[dir="ltr"] .settings-select {
+  background-position: right 16px center;
+  padding-left: 18px;
+  padding-right: 48px;
+}
+
+.settings-select:hover,
+.settings-select:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 24px rgba(212, 175, 55, 0.2);
+}
+
+.settings-select option {
+  background: #0d3b2e;
+  color: var(--cream);
+  padding: 8px;
+}
+
+html[data-theme="light"] .settings-select option {
+  background: #ffffff;
+  color: #1a1a1a;
+}
+
+/* ===== زر إعادة التعيين ===== */
+.settings-reset {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px;
+  background: rgba(192, 57, 43, 0.08);
+  border: 1.5px solid rgba(192, 57, 43, 0.35);
+  border-radius: 14px;
+  color: #ff8a7a;
+  cursor: pointer;
+  font: 700 0.88rem var(--font-ui);
+  transition: all 0.28s ease;
+  margin-top: 8px;
+}
+
+.settings-reset:hover {
+  background: linear-gradient(135deg, #c0392b, #e74c3c);
+  color: white;
+  border-color: #c0392b;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(192, 57, 43, 0.4);
+}
+
+.settings-reset:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* ===== Overlay ===== */
+.settings-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 3400;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.settings-overlay.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 500px) {
+  .settings-panel {
+    width: 100vw;
+    border-radius: 0;
+  }
+
+  .settings-header {
+    padding: 20px 18px 16px;
+  }
+
+  .settings-body {
+    padding: 16px 16px 24px;
+  }
+
+  .settings-group {
+    padding: 16px;
+    border-radius: 16px;
+  }
+
+  .font-size-btn {
+    width: 46px;
+    height: 46px;
+    font-size: 1rem;
+  }
+
+  .font-size-value strong {
+    font-size: 1.5rem;
+  }
+
+  .font-size-presets {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .font-family-btn {
+    padding: 12px 14px;
+  }
+
+  .font-family-name {
+    font-size: 0.95rem;
+  }
+}

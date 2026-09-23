@@ -1,0 +1,456 @@
+/* ===== نظام الاستخارة — v1 ===== */
+
+.istikhara-hero {
+  max-width: 640px;
+  margin: 0 auto 40px;
+  padding: 32px 24px 28px;
+  text-align: center;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 24px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  position: relative;
+  overflow: hidden;
+}
+
+/* ⭐ خلفية نجوم */
+.istikhara-stars {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  opacity: 0.5;
+}
+
+.istikhara-star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: #d4af37;
+  border-radius: 50%;
+  box-shadow: 0 0 6px #d4af37;
+  animation: starTwinkle 3s ease-in-out infinite;
+}
+
+@keyframes starTwinkle {
+  0%, 100% { opacity: 0.2; transform: scale(0.8); }
+  50%      { opacity: 1;   transform: scale(1.4); }
+}
+
+/* ===== العنوان ===== */
+.istikhara-header {
+  position: relative;
+  z-index: 2;
+  margin-bottom: 24px;
+}
+
+.istikhara-title {
+  font: 800 1.5rem var(--font-ui);
+  color: var(--gold);
+  margin: 0 0 8px;
+  letter-spacing: 0.5px;
+}
+
+.istikhara-subtitle {
+  font: 500 0.88rem var(--font-ui);
+  color: rgba(245, 241, 232, 0.65);
+  margin: 0;
+  line-height: 1.6;
+}
+
+html[data-theme="light"] .istikhara-subtitle { color: rgba(26, 26, 26, 0.65); }
+
+/* ===== شريط التقدم ===== */
+.istikhara-progress {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 28px;
+  position: relative;
+  z-index: 2;
+}
+
+.istikhara-step-dot {
+  width: 32px;
+  height: 6px;
+  border-radius: 6px;
+  background: rgba(212, 175, 55, 0.2);
+  transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.istikhara-step-dot.active {
+  background: linear-gradient(90deg, #d4af37, #e6c869);
+  width: 48px;
+  box-shadow: 0 0 16px rgba(212, 175, 55, 0.6);
+}
+
+.istikhara-step-dot.done {
+  background: rgba(212, 175, 55, 0.6);
+}
+
+/* ===== المراحل ===== */
+.istikhara-stage {
+  display: none;
+  position: relative;
+  z-index: 2;
+  min-height: 260px;
+}
+
+.istikhara-stage.active {
+  display: block;
+  animation: stageIn 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+@keyframes stageIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== المرحلة 1: الترحيب ===== */
+.istikhara-welcome-icon {
+  font-size: 4rem;
+  margin-bottom: 16px;
+  animation: welcomeFloat 3s ease-in-out infinite;
+}
+
+@keyframes welcomeFloat {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50%      { transform: translateY(-10px) rotate(2deg); }
+}
+
+.istikhara-welcome-title {
+  font: 800 1.4rem var(--font-ui);
+  color: var(--gold);
+  margin-bottom: 14px;
+}
+
+.istikhara-welcome-text {
+  font: 500 0.92rem var(--font-ui);
+  color: rgba(245, 241, 232, 0.8);
+  line-height: 1.9;
+  margin-bottom: 24px;
+  max-width: 480px;
+  margin-inline: auto;
+}
+
+html[data-theme="light"] .istikhara-welcome-text { color: rgba(26, 26, 26, 0.8); }
+
+/* ===== المرحلة 2: الكتابة ===== */
+.istikhara-question-box {
+  margin-bottom: 20px;
+  text-align: right;
+}
+
+html[dir="ltr"] .istikhara-question-box { text-align: left; }
+
+.istikhara-question-label {
+  display: block;
+  font: 700 0.85rem var(--font-ui);
+  color: var(--gold-soft);
+  margin-bottom: 10px;
+}
+
+.istikhara-textarea {
+  width: 100%;
+  min-height: 110px;
+  padding: 14px 16px;
+  background: var(--input-bg);
+  border: 1.5px solid var(--input-border);
+  border-radius: 14px;
+  color: var(--cream);
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  line-height: 1.7;
+  resize: vertical;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.istikhara-textarea:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 24px rgba(212, 175, 55, 0.25);
+}
+
+.istikhara-textarea::placeholder {
+  color: rgba(245, 241, 232, 0.35);
+}
+
+html[data-theme="light"] .istikhara-textarea::placeholder {
+  color: rgba(26, 26, 26, 0.35);
+}
+
+.istikhara-char-count {
+  display: block;
+  text-align: left;
+  font: 600 0.72rem var(--font-ui);
+  color: rgba(212, 175, 55, 0.55);
+  margin-top: 6px;
+}
+
+html[dir="ltr"] .istikhara-char-count { text-align: right; }
+
+/* ===== المرحلة 3: الصلاة على النبي ===== */
+.istikhara-salawat-box {
+  padding: 24px;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), rgba(212, 175, 55, 0.03));
+  border: 1.5px solid rgba(212, 175, 55, 0.35);
+  border-radius: 18px;
+  margin-bottom: 20px;
+}
+
+.istikhara-salawat-text {
+  font-family: var(--font-quran);
+  font-size: 1.5rem;
+  color: var(--gold);
+  line-height: 1.9;
+  margin-bottom: 18px;
+  direction: rtl;
+}
+
+.istikhara-salawat-counter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.istikhara-counter-num {
+  font: 800 2.2rem var(--font-ui);
+  color: var(--gold);
+  min-width: 60px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.istikhara-counter-num.bump {
+  animation: numBump 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes numBump {
+  0%   { transform: scale(1);   color: #d4af37; }
+  50%  { transform: scale(1.35); color: #7fe8a8; }
+  100% { transform: scale(1);   color: #d4af37; }
+}
+
+.istikhara-counter-total {
+  font: 600 1rem var(--font-ui);
+  color: rgba(245, 241, 232, 0.6);
+}
+
+html[data-theme="light"] .istikhara-counter-total { color: rgba(26, 26, 26, 0.6); }
+
+.istikhara-salawat-btn {
+  width: 100%;
+  padding: 16px 20px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #d4af37, #e6c869);
+  color: #0d3b2e;
+  font: 800 1rem var(--font-ui);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.istikhara-salawat-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(212, 175, 55, 0.6);
+}
+
+.istikhara-salawat-btn:active {
+  transform: scale(0.97);
+}
+
+.istikhara-salawat-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+html[data-theme="dark"] .istikhara-salawat-btn { color: #0a0a0a; }
+html[data-theme="light"] .istikhara-salawat-btn { color: #ffffff; }
+
+/* ===== المرحلة 4: النتيجة ===== */
+.istikhara-result-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.istikhara-category-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  border-radius: 50px;
+  font: 700 0.85rem var(--font-ui);
+  border: 1.5px solid currentColor;
+  animation: badgeIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes badgeIn {
+  from { transform: scale(0.3); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+.istikhara-category-icon { font-size: 1.1rem; }
+
+/* ⭐ الآية بتصميم كوني */
+.istikhara-verse {
+  position: relative;
+  padding: 32px 24px;
+  margin-bottom: 20px;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(212, 175, 55, 0.08), transparent 70%),
+    linear-gradient(135deg, rgba(13, 59, 46, 0.6), rgba(26, 107, 82, 0.4));
+  border: 1.5px solid rgba(212, 175, 55, 0.4);
+  border-radius: 20px;
+  overflow: hidden;
+  animation: verseIn 0.9s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes verseIn {
+  0%   { transform: scale(0.85); opacity: 0; filter: blur(12px); }
+  50%  { filter: blur(4px); }
+  100% { transform: scale(1);   opacity: 1; filter: blur(0); }
+}
+
+/* هالة ضوئية خلف الآية */
+.istikhara-verse::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 150%;
+  height: 150%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.18), transparent 60%);
+  pointer-events: none;
+  animation: verseHalo 4s ease-in-out infinite;
+}
+
+@keyframes verseHalo {
+  0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+  50%      { opacity: 1;   transform: translate(-50%, -50%) scale(1.1); }
+}
+
+.istikhara-verse-text {
+  font-family: var(--font-quran);
+  font-size: clamp(1.3rem, 4vw, 1.8rem);
+  color: var(--cream);
+  line-height: 2.2;
+  margin-bottom: 16px;
+  position: relative;
+  z-index: 2;
+  direction: rtl;
+  text-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+}
+
+.istikhara-verse-ref {
+  font: 700 0.9rem var(--font-ui);
+  color: var(--gold);
+  position: relative;
+  z-index: 2;
+  letter-spacing: 0.5px;
+}
+
+/* التوجيه الحكيم */
+.istikhara-wisdom {
+  padding: 16px 20px;
+  background: rgba(212, 175, 55, 0.08);
+  border-inline-start: 3px solid var(--gold);
+  border-radius: 12px;
+  font: 600 0.9rem var(--font-ui);
+  color: rgba(245, 241, 232, 0.85);
+  line-height: 1.8;
+  margin-bottom: 24px;
+  text-align: start;
+  animation: wisdomIn 1s ease 0.5s backwards;
+}
+
+@keyframes wisdomIn {
+  from { opacity: 0; transform: translateX(-10px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+html[data-theme="light"] .istikhara-wisdom { color: rgba(26, 26, 26, 0.85); }
+
+/* ===== الأزرار ===== */
+.istikhara-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.istikhara-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 15px 20px;
+  border-radius: 14px;
+  font: 700 0.95rem var(--font-ui);
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  transition: all 0.25s cubic-bezier(0.25, 1, 0.5, 1);
+  width: 100%;
+}
+
+.istikhara-btn:active { transform: scale(0.98); }
+
+.istikhara-btn-icon { font-size: 1.15rem; }
+
+.istikhara-btn-primary {
+  background: linear-gradient(135deg, #d4af37 0%, #e6c869 100%);
+  color: #0d3b2e;
+  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.35);
+}
+
+.istikhara-btn-primary:hover {
+  box-shadow: 0 10px 30px rgba(212, 175, 55, 0.55);
+  transform: translateY(-2px);
+}
+
+html[data-theme="dark"] .istikhara-btn-primary { color: #0a0a0a; }
+html[data-theme="light"] .istikhara-btn-primary { color: #ffffff; }
+
+.istikhara-btn-secondary {
+  background: rgba(212, 175, 55, 0.08);
+  color: var(--gold);
+  border-color: rgba(212, 175, 55, 0.45);
+}
+
+.istikhara-btn-secondary:hover {
+  background: rgba(212, 175, 55, 0.16);
+  border-color: var(--gold);
+  color: var(--gold-soft);
+  transform: translateY(-2px);
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 500px) {
+  .istikhara-hero {
+    padding: 24px 18px;
+    border-radius: 20px;
+  }
+
+  .istikhara-welcome-icon { font-size: 3.2rem; }
+  .istikhara-welcome-title { font-size: 1.2rem; }
+  .istikhara-welcome-text { font-size: 0.85rem; }
+
+  .istikhara-salawat-text { font-size: 1.3rem; }
+  .istikhara-counter-num { font-size: 1.9rem; }
+
+  .istikhara-verse-text { font-size: 1.25rem; line-height: 2; }
+}

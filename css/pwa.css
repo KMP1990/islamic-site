@@ -1,0 +1,339 @@
+/* ===== زر تثبيت PWA ===== */
+.first-run-modal { position: fixed; inset: 0; z-index: 7000; display: grid; place-items: center; padding: 18px; background: rgba(0,0,0,.68); opacity: 0; pointer-events: none; transition: opacity .35s ease; backdrop-filter: blur(10px); }
+.first-run-modal.show { opacity: 1; pointer-events: auto; }
+.first-run-card { position: relative; width: min(100%, 460px); padding: 34px 24px 20px; text-align: center; color: var(--cream); background: linear-gradient(155deg, var(--player-bg-start), var(--player-bg-end)); border: 1px solid var(--gold); border-radius: 24px; box-shadow: 0 25px 80px rgba(0,0,0,.45); overflow: hidden; }
+.first-run-progress { display: flex; gap: 6px; justify-content: center; margin-bottom: 22px; }
+.first-run-progress span { width: 28px; height: 4px; border-radius: 4px; background: rgba(212,175,55,.25); transition: all .3s ease; }
+.first-run-progress span.active { width: 52px; background: var(--gold); }
+.first-run-close { position: absolute; top: 10px; left: 12px; width: 32px; height: 32px; border: 1px solid var(--card-border); border-radius: 50%; color: var(--gold); background: transparent; font-size: 1.4rem; cursor: pointer; }
+.first-run-icon { font-size: 2.8rem; margin-bottom: 10px; }
+.first-run-step { display: none; min-height: 210px; }
+.first-run-step.active { display: block; animation: firstRunIn .35s ease; }
+.first-run-step h2 { color: var(--gold); font: 700 1.35rem var(--font-ui); margin-bottom: 10px; }
+.first-run-step p { color: rgba(245,241,232,.72); font: .9rem/1.9 var(--font-ui); }
+html[data-theme="light"] .first-run-step p { color: rgba(26,26,26,.72); }
+.first-run-action { margin-top: 16px; padding: 11px 18px; color: var(--green-deep); background: var(--gold); border: 0; border-radius: 12px; font: 700 .82rem var(--font-ui); cursor: pointer; }
+.first-run-step small { display: block; margin-top: 10px; color: var(--gold-soft); font: .72rem var(--font-ui); }
+.first-run-controls { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 12px; }
+.first-run-skip, .first-run-next { padding: 10px 18px; border-radius: 12px; font: 700 .82rem var(--font-ui); cursor: pointer; }
+.first-run-skip { border: 0; color: var(--gold-soft); background: transparent; }
+.first-run-next { border: 1px solid var(--gold); color: var(--green-deep); background: var(--gold); }
+@keyframes firstRunIn { from { opacity: 0; transform: translateX(12px); } to { opacity: 1; transform: translateX(0); } }
+
+/* ===== زر تثبيت PWA — مع ✕ للإغلاق الدائم ===== */
+.pwa-install-btn {
+  position: fixed;
+  bottom: calc(88px + env(safe-area-inset-bottom, 0px));
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 20px 14px 20px;
+  padding-inline-start: 44px; /* مكان ✕ */
+  background: linear-gradient(135deg, var(--gold), var(--gold-soft));
+  border: none;
+  border-radius: 50px;
+  color: var(--green-deep);
+  cursor: pointer;
+  font-family: var(--font-ui);
+  font-size: 0.92rem;
+  font-weight: 700;
+  box-shadow: 0 8px 30px rgba(212, 175, 55, 0.5);
+  z-index: 2500;
+  opacity: 0;
+  transform: translateY(100px);
+  transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  animation: installBtnPulse 2.5s ease-in-out infinite;
+}
+
+/* ✕ للإغلاق */
+.pwa-install-close {
+  position: absolute;
+  left: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(13, 59, 46, 0.15);
+  border: none;
+  border-radius: 50%;
+  color: var(--green-deep);
+  font-size: 0.85rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  padding: 0;
+  z-index: 2;
+}
+
+html[dir="ltr"] .pwa-install-close {
+  left: auto;
+  right: 6px;
+}
+
+.pwa-install-close:hover {
+  background: #c0392b;
+  color: white;
+  transform: translateY(-50%) rotate(90deg) scale(1.1);
+}
+
+.pwa-install-close:active {
+  transform: translateY(-50%) scale(0.9);
+}
+
+html[data-theme="dark"] .pwa-install-btn {
+  color: #0a0a0a;
+}
+
+html[data-theme="light"] .pwa-install-btn {
+  color: #ffffff;
+}
+
+.pwa-install-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.pwa-install-btn.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.pwa-install-btn:hover {
+  background: var(--gold-soft);
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 12px 40px rgba(212, 175, 55, 0.6);
+}
+
+.pwa-install-btn:active {
+  transform: translateY(-2px) scale(0.98);
+}
+
+@keyframes installBtnPulse {
+  0%, 100% { box-shadow: 0 8px 30px rgba(212, 175, 55, 0.5); }
+  50% { box-shadow: 0 8px 45px rgba(212, 175, 55, 0.8); }
+}
+
+/* ===== بانر التحديث ===== */
+.pwa-update-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, var(--green-deep), var(--green-main));
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  z-index: 9999;
+  font-family: var(--font-ui);
+  font-size: 0.92rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  transform: translateY(-100%);
+  transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.pwa-update-banner.show {
+  transform: translateY(0);
+}
+
+.pwa-update-banner button {
+  padding: 8px 20px;
+  background: var(--gold);
+  border: none;
+  border-radius: 50px;
+  color: var(--green-deep);
+  cursor: pointer;
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  font-weight: 700;
+  transition: all 0.3s ease;
+}
+
+.pwa-update-banner button:hover {
+  background: var(--gold-soft);
+  transform: scale(1.05);
+}
+
+/* ===== رسالة تثبيت iOS ===== */
+.ios-install-prompt {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  right: 20px;
+  max-width: 380px;
+  margin: 0 auto;
+  padding: 16px;
+  background: linear-gradient(135deg, var(--player-bg-start), var(--player-bg-end));
+  border: 1.5px solid var(--gold);
+  border-radius: 18px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+  z-index: 4000;
+  opacity: 0;
+  transform: translateY(100px);
+  transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  backdrop-filter: blur(20px);
+}
+
+.ios-install-prompt.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.ios-close {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(212, 175, 55, 0.15);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 50%;
+  color: var(--gold);
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: all 0.25s ease;
+}
+
+html[dir="ltr"] .ios-close {
+  left: auto;
+  right: 10px;
+}
+
+.ios-close:hover {
+  background: var(--gold);
+  color: var(--green-deep);
+}
+
+.ios-content {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-top: 8px;
+}
+
+.ios-icon {
+  flex-shrink: 0;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(212, 175, 55, 0.12);
+  border: 1.5px solid rgba(212, 175, 55, 0.4);
+  border-radius: 50%;
+  font-size: 1.6rem;
+}
+
+.ios-text {
+  flex: 1;
+}
+
+.ios-text strong {
+  display: block;
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  color: var(--gold);
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.ios-text p {
+  font-family: var(--font-ui);
+  font-size: 0.82rem;
+  color: rgba(245, 241, 232, 0.7);
+  line-height: 1.5;
+  margin: 0;
+}
+
+html[data-theme="light"] .ios-text p {
+  color: rgba(26, 26, 26, 0.7);
+}
+
+/* ===== حالة Offline ===== */
+body.offline::before {
+  content: '📴 أنت غير متصل بالإنترنت';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 8px 20px;
+  background: #c0392b;
+  color: white;
+  text-align: center;
+  font-family: var(--font-ui);
+  font-size: 0.82rem;
+  font-weight: 600;
+  z-index: 9998;
+  animation: offlineSlide 0.4s ease;
+}
+
+@keyframes offlineSlide {
+  from { transform: translateY(-100%); }
+  to { transform: translateY(0); }
+}
+
+/* ===== Standalone Mode ===== */
+body.standalone .site-footer {
+  bottom: max(12px, env(safe-area-inset-bottom, 12px));
+}
+
+/* ===== جوال ===== */
+@media (max-width: 600px) {
+  .first-run-card { padding: 30px 18px 16px; }
+
+  .pwa-install-btn {
+    bottom: calc(82px + env(safe-area-inset-bottom, 0px));
+    right: 16px;
+    padding: 12px 16px;
+    padding-inline-start: 38px;
+    font-size: 0.85rem;
+  }
+
+  .pwa-install-btn svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .pwa-install-close {
+    width: 22px;
+    height: 22px;
+    font-size: 0.75rem;
+    left: 5px;
+  }
+
+  html[dir="ltr"] .pwa-install-close {
+    left: auto;
+    right: 5px;
+  }
+
+  .ios-install-prompt {
+    bottom: 16px;
+    left: 16px;
+    right: 16px;
+  }
+
+  .ios-icon {
+    width: 44px;
+    height: 44px;
+    font-size: 1.4rem;
+  }
+}
+
+/* ===== تخطيط الطباعة ===== */
+@media print {
+  .pwa-install-btn,
+  .pwa-update-banner,
+  .ios-install-prompt,
+  .site-footer {
+    display: none !important;
+  }
+}

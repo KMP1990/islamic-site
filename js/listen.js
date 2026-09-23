@@ -36,8 +36,9 @@ let saveStateInterval = null;
 const MP3QURAN_API = 'https://www.mp3quran.net/api/v3';
 const ALQURAN_API = 'https://api.alquran.cloud/v1';
 const PLAYER_STATE_KEY = 'tariq_player_state_v2';
+
+/* ⚠️ ملاحظة: IDB_TTL_SURAHS معرّف في quran.js — لا تعيد تعريفه هنا */
 const IDB_TTL_RECITERS = 7 * 24 * 60 * 60 * 1000;
-const IDB_TTL_SURAHS = 7 * 24 * 60 * 60 * 1000;
 
 /* ===== إزالة التشكيل ===== */
 function removeTashkeelListen(text) {
@@ -74,7 +75,7 @@ function debounce(func, wait) {
 }
 
 /* ============================================
-   ✅ حفظ واسترجاع حالة المشغل
+   حفظ واسترجاع حالة المشغل
    ============================================ */
 function savePlayerState() {
   if (!currentReciter || currentSurahIndex < 0) return;
@@ -133,7 +134,7 @@ function stopSaveStateInterval() {
 }
 
 /* ============================================
-   ✅ تحميل القرّاء (مع IndexedDB)
+   تحميل القرّاء (مع IndexedDB)
    ============================================ */
 async function loadReciters() {
   const list = document.getElementById('recitersList');
@@ -217,7 +218,7 @@ async function openReciter(reciterId) {
     try {
       let data;
       if (window.idbHelper) {
-        data = await window.idbHelper.fetch(`${ALQURAN_API}/surah`, 'surahs', IDB_TTL_SURAHS);
+        data = await window.idbHelper.fetch(`${ALQURAN_API}/surah`, 'surahs', IDB_TTL_RECITERS);
       } else {
         data = await fetch(`${ALQURAN_API}/surah`).then(res => res.json());
       }
@@ -423,17 +424,27 @@ async function showPlayingView(surah) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 
   try {
-    const res = await fetch(`${ALQURAN_API}/surah/${surah.number}/ar.alafasy`);
-    const data = await res.json();
+    let data;
+    if (window.idbHelper) {
+      data = await window.idbHelper.fetch(`${ALQURAN_API}/surah/${surah.number}/ar.alafasy`, 'ayahs', IDB_TTL_RECITERS);
+    } else {
+      const res = await fetch(`${ALQURAN_API}/surah/${surah.number}/ar.alafasy`);
+      data = await res.json();
+    }
     const ayahs = data.data.ayahs;
     playingAyahs = ayahs;
 
     let translations = [];
     if (lang === 'en') {
       try {
-        const transRes = await fetch(`${ALQURAN_API}/surah/${surah.number}/en.sahih`);
-        const transData = await transRes.json();
-        translations = transData.data.ayahs;
+        if (window.idbHelper) {
+          const transData = await window.idbHelper.fetch(`${ALQURAN_API}/surah/${surah.number}/en.sahih`, 'ayahs', IDB_TTL_RECITERS);
+          translations = transData.data.ayahs;
+        } else {
+          const transRes = await fetch(`${ALQURAN_API}/surah/${surah.number}/en.sahih`);
+          const transData = await transRes.json();
+          translations = transData.data.ayahs;
+        }
       } catch (err) {
         console.error('خطأ في تحميل الترجمة:', err);
       }

@@ -1,15 +1,13 @@
-/* ===== Service Worker - طريق الهدى + Firebase Cloud Messaging ===== */
+/* ===== Service Worker - طريق الهدى (v5.0.0 - ntfy.sh) ===== */
 
-const CACHE_NAME = 'tariq-alhuda-v4.0.0';
-const RUNTIME_CACHE = 'tariq-alhuda-runtime-v4.0';
+const CACHE_NAME = 'tariq-alhuda-v5.0.0';
+const RUNTIME_CACHE = 'tariq-alhuda-runtime-v5.0';
 
 const CORE_ASSETS = [
   './',
   './index.html',
   './dashboard.html',
   './manifest.json',
-  './firebase-messaging-sw.js',
-  // CSS
   './css/global.css',
   './css/landing.css',
   './css/quran.css',
@@ -26,7 +24,6 @@ const CORE_ASSETS = [
   './css/settings.css',
   './css/friends.css',
   './css/pwa.css',
-  // JS Core
   './js/health.js',
   './js/firebase-config.js',
   './js/firebase.js',
@@ -54,7 +51,6 @@ const CORE_ASSETS = [
   './js/landing.js',
   './js/indexeddb.js',
   './js/analytics.js',
-  // Data
   './locales/ar.json',
   './locales/en.json',
   './data/ziyarat.json',
@@ -63,7 +59,7 @@ const CORE_ASSETS = [
 
 /* ===== تثبيت ===== */
 self.addEventListener('install', (event) => {
-  console.log('[SW] Installing v4.0.0...');
+  console.log('[SW] Installing v5.0.0...');
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
@@ -78,7 +74,7 @@ self.addEventListener('install', (event) => {
 
 /* ===== تنشيط ===== */
 self.addEventListener('activate', (event) => {
-  console.log('[SW] Activating v4.0.0...');
+  console.log('[SW] Activating v5.0.0...');
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
@@ -100,18 +96,9 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  /* تجاهل الإضافات */
   if (url.protocol === 'chrome-extension:') return;
 
-  /* firebase-messaging-sw.js — لا نعترضه */
-  if (url.pathname === '/firebase-messaging-sw.js') {
-    return;
-  }
-
-  /* تجاهل طلبات POST */
-  if (request.method !== 'GET') {
-    return;
-  }
+  if (request.method !== 'GET') return;
 
   /* Firebase — network-first */
   if (url.hostname.includes('firebase') ||
@@ -119,6 +106,11 @@ self.addEventListener('fetch', (event) => {
       url.hostname.includes('googleapis.com') ||
       url.hostname.includes('gstatic.com')) {
     event.respondWith(networkFirst(request));
+    return;
+  }
+
+  /* ntfy.sh — تجاهل كامل (SSE + POST) */
+  if (url.hostname === 'ntfy.sh') {
     return;
   }
 
@@ -146,7 +138,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  /* صوتيات — تجاهل كامل */
+  /* صوتيات — تجاهل */
   if (request.destination === 'audio' ||
       url.pathname.endsWith('.mp3') ||
       url.pathname.endsWith('.wav') ||
@@ -154,25 +146,20 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  /* فيديو — تجاهل */
-  if (request.destination === 'video') {
-    return;
-  }
+  if (request.destination === 'video') return;
 
   /* الباقي — cache-first */
   event.respondWith(cacheFirst(request));
 });
 
 /* ============================================
-   Cache First — آمن
+   Cache First
    ============================================ */
 async function cacheFirst(request) {
   try {
     const cached = await caches.match(request);
     if (cached) return cached;
-  } catch (e) {
-    console.warn('[SW] Cache match error:', e);
-  }
+  } catch (e) {}
 
   try {
     const response = await fetch(request);
@@ -180,9 +167,7 @@ async function cacheFirst(request) {
       try {
         const cache = await caches.open(RUNTIME_CACHE);
         cache.put(request, response.clone());
-      } catch (e) {
-        console.warn('[SW] Cache put error:', e);
-      }
+      } catch (e) {}
     }
     return response;
   } catch (err) {
@@ -197,7 +182,7 @@ async function cacheFirst(request) {
 }
 
 /* ============================================
-   Network First — آمن
+   Network First
    ============================================ */
 async function networkFirst(request) {
   try {
@@ -225,17 +210,13 @@ self.addEventListener('message', (event) => {
   }
 });
 
-/* ============================================
-   Notification Click Handler
-   يعمل مع FCM Service Worker
-   ============================================ */
+/* ===== Notification Click ===== */
 self.addEventListener('notificationclick', (event) => {
-  console.log('[SW] Notification clicked:', event.notification);
-
+  console.log('[SW] Notification clicked');
   event.notification.close();
 
   const data = event.notification.data || {};
-  const urlToOpen = data.url || data.link || '/dashboard.html#friends';
+  const urlToOpen = data.url || data.link || '/dashboard.html';
 
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true })
@@ -258,54 +239,5 @@ self.addEventListener('notificationclick', (event) => {
           return clients.openWindow(urlToOpen);
         }
       })
-  );
-});
-
-/* ============================================
-   Web Push Handler (احتياطي)
-   ملاحظة: FCM الرئيسي يعمل عبر firebase-messaging-sw.js
-   ============================================ */
-self.addEventListener('push', (event) => {
-  console.log('[SW] Push received!');
-
-  let data = {
-    title: 'إشعار جديد',
-    body: '',
-    icon: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Crect width="100" height="100" rx="20" fill="%230d3b2e"/%3E%3Ctext x="50" y="68" font-size="60" text-anchor="middle" fill="%23d4af37" font-family="serif"%3E﷽%3C/text%3E%3C/svg%3E',
-    data: {}
-  };
-
-  try {
-    if (event.data) {
-      const payload = event.data.json();
-      console.log('[SW] Push payload:', payload);
-
-      if (payload.notification) {
-        data.title = payload.notification.title || data.title;
-        data.body = payload.notification.body || data.body;
-      }
-
-      if (payload.data) {
-        data.data = payload.data;
-        if (payload.data.title) data.title = payload.data.title;
-        if (payload.data.body) data.body = payload.data.body;
-      }
-    }
-  } catch (e) {
-    console.warn('[SW] Push parse error:', e);
-  }
-
-  const options = {
-    body: data.body,
-    icon: data.icon,
-    badge: data.icon,
-    vibrate: [200, 100, 200, 100, 200],
-    tag: data.data.chatId ? `chat_${data.data.chatId}` : `notif_${Date.now()}`,
-    requireInteraction: false,
-    data: data.data
-  };
-
-  event.waitUntil(
-    self.registration.showNotification(data.title, options)
   );
 });

@@ -1,10 +1,11 @@
 /* ============================================
-   نظام الأصدقاء والمحادثات — v3.0.0
+   نظام الأصدقاء والمحادثات — v4.0.0
    ============================================
-   - إشعارات Push عبر Backend Proxy
+   - إشعارات موحّدة عبر NotificationManager
+   - إزالة الإشعارات عند فتح المحادثة
    - مزامنة lastSeenMessages مع Firestore
-   - منع تكرار الإشعارات
-   - حذف الرسائل والمحادثات
+   - Presence System للاتصال
+   - Push عبر ntfy.sh
    ============================================ */
 
 const FRIENDS_COLLECTION = 'friendships';
@@ -118,20 +119,17 @@ function markNotifAsRead(notifId) {
    ============================================ */
 async function loadLastSeenMessages() {
   try {
-    // 1. حاول من Firestore أولاً
     const user = window.authApi?.getCurrentUser?.();
     if (user && window.firebaseHelpers) {
       try {
         const prefs = await window.firebaseHelpers.fbGetDoc('userPrefs', user.uid);
         if (prefs && prefs.lastSeenMessages) {
           friendsState.lastSeenMessages = prefs.lastSeenMessages;
-          // نسخة محلية للسرعة
           localStorage.setItem('tariq_last_read', JSON.stringify(prefs.lastSeenMessages));
           return;
         }
       } catch (e) {}
     }
-    // 2. Fallback: localStorage
     friendsState.lastSeenMessages = JSON.parse(localStorage.getItem('tariq_last_read') || '{}');
   } catch {
     friendsState.lastSeenMessages = {};
@@ -142,7 +140,6 @@ async function saveLastSeenMessages() {
   try {
     localStorage.setItem('tariq_last_read', JSON.stringify(friendsState.lastSeenMessages));
 
-    // مزامنة مع Firestore
     const user = window.authApi?.getCurrentUser?.();
     if (user && window.firebaseHelpers) {
       await window.firebaseHelpers.fbSetDoc('userPrefs', user.uid, {
@@ -180,7 +177,7 @@ async function showFriends() {
   if (!user) return;
 
   friendsState.currentUser = user;
-  await loadLastSeenMessages(); // ✅ تحميل lastSeenMessages أولاً
+  await loadLastSeenMessages();
   await initFriendsSystem();
 
   if (typeof trackEvent === 'function') trackEvent('friends_opened');
@@ -203,13 +200,15 @@ async function initFriendsSystem() {
     loadUnreadCounts()
   ]);
 
-  updateUserStatus('online').catch(() => {});
+  // ✅ Presence System يتولى الحالة — لا حاجة لـ updateUserStatus هنا
+  if (window.PresenceSystem) {
+    window.PresenceSystem.start().catch(() => {});
+  }
 
   try {
     listenToChats();
     listenToFriendships();
     listenToNotifications();
-    startPresenceTracking();
   } catch (e) {
     console.warn('[Friends] Listen setup failed:', e);
   }
@@ -588,9 +587,14 @@ async function removeFriend(friendUid) {
 }
 
 /* ============================================
-   حالة الاتصال
+   حالة الاتصال — عبر PresenceSystem
    ============================================ */
 function getCachedUserStatus(uid) {
+  // ✅ استخدام PresenceSystem إذا متاح
+  if (window.PresenceSystem) {
+    return window.PresenceSystem.getStatus(uid).status;
+  }
+
   try {
     const cached = JSON.parse(localStorage.getItem('tariq_user_status') || '{}');
     return cached[uid]?.status || 'offline';
@@ -603,6 +607,11 @@ async function updateUserStatus(status = 'online') {
   if (!friendsState.currentUser) return;
   if (!isFirebaseReady()) return;
 
+  // ✅ PresenceSystem يتولى هذا تلقائياً
+  if (window.PresenceSystem) {
+    return window.PresenceSystem.updateStatus(status);
+  }
+
   try {
     await window.firebaseHelpers.fbSetDoc(USER_STATUS_COLLECTION, friendsState.currentUser.uid, {
       uid: friendsState.currentUser.uid,
@@ -610,19 +619,6 @@ async function updateUserStatus(status = 'online') {
       lastSeen: new Date().toISOString()
     });
   } catch (err) {}
-}
-
-function startPresenceTracking() {
-  if (friendsState.presenceInterval) clearInterval(friendsState.presenceInterval);
-
-  friendsState.presenceInterval = setInterval(() => {
-    if (!document.hidden) updateUserStatus('online').catch(() => {});
-  }, 30000);
-
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden) updateUserStatus('away').catch(() => {});
-    else updateUserStatus('online').catch(() => {});
-  });
 }
 
 /* ============================================
@@ -755,9 +751,15 @@ function renderChats() {
     const time = chat.lastMessageAt ? formatRelativeTime(chat.lastMessageAt) : '';
     const unread = chat.unreadCount || 0;
 
+    // ✅ Presence: نقطة الحالة
+    const status = chat.type === 'private' ? getCachedUserStatus(chat.otherUser?.uid) : '';
+
     return `
       <div class="chat-item ${unread > 0 ? 'unread' : ''}" onclick="openChat('${chat.id}')">
-        <div class="friend-avatar">${avatar}</div>
+        <div class="friend-avatar">
+          ${avatar}
+          ${status ? `<span class="friend-status-dot ${status}"></span>` : ''}
+        </div>
         <div class="chat-info">
           <div class="chat-header">
             <div class="chat-name">${escapeHtml(displayName)}</div>
@@ -814,7 +816,8 @@ function listenToFriendships() {
               body: `${req.fromData?.fullName || 'مستخدم'} أرسل لك طلب صداقة`,
               icon: '👥',
               color: 'gold',
-              link: 'friends_requests'
+              link: 'friends_requests',
+              type: 'friend_request'
             });
           });
         }
@@ -829,7 +832,7 @@ function listenToFriendships() {
 }
 
 /* ============================================
-   نافذة المحادثة
+   ✅ نافذة الدردشة — عبر ChatFloatWindow
    ============================================ */
 async function openChatWith(uid) {
   if (!requireFriendsLogin()) return;
@@ -854,6 +857,11 @@ async function openChatWith(uid) {
 }
 
 async function openChat(chatId) {
+  // ✅ إزالة إشعارات هذه المحادثة فوراً
+  if (window.NotificationManager) {
+    window.NotificationManager.clearByChat(chatId);
+  }
+
   if (!requireFriendsLogin()) return;
 
   let chat = friendsState.chats.find(c => c.id === chatId);
@@ -870,6 +878,18 @@ async function openChat(chatId) {
 
   friendsState.activeChat = chat;
 
+  // ✅ استخدام ChatFloatWindow الجديد
+  if (window.ChatFloatWindow) {
+    window.ChatFloatWindow.open(chat);
+    markChatAsRead(chatId);
+
+    if (typeof trackEvent === 'function') {
+      trackEvent('chat_opened');
+    }
+    return;
+  }
+
+  // Fallback: النافذة القديمة (إن وُجدت)
   const chatWindow = document.getElementById('chatWindow');
   if (!chatWindow) return;
 
@@ -905,6 +925,12 @@ async function openChat(chatId) {
 }
 
 async function closeChat() {
+  // ✅ إغلاق النافذة العائمة
+  if (window.ChatFloatWindow) {
+    window.ChatFloatWindow.close();
+    return;
+  }
+
   const chatWindow = document.getElementById('chatWindow');
   if (chatWindow) chatWindow.classList.remove('open');
 
@@ -924,12 +950,17 @@ async function closeChat() {
 }
 
 function minimizeChat() {
+  if (window.ChatFloatWindow) {
+    window.ChatFloatWindow.toggleMinimize();
+    return;
+  }
+
   const chatWindow = document.getElementById('chatWindow');
   if (chatWindow) chatWindow.classList.toggle('minimized');
 }
 
 /* ============================================
-   تحميل الرسائل
+   تحميل الرسائل (لـ Fallback)
    ============================================ */
 async function loadChatMessages(chatId) {
   if (!isFirebaseReady()) return;
@@ -939,10 +970,7 @@ async function loadChatMessages(chatId) {
 
     friendsState.messages = all
       .filter(m => m.chatId === chatId)
-      .map(m => ({
-        ...m,
-        _ts: toTimestamp(m.createdAt)
-      }))
+      .map(m => ({ ...m, _ts: toTimestamp(m.createdAt) }))
       .sort((a, b) => a._ts - b._ts);
 
     friendsState.groupedMessages = groupMessagesByDay(friendsState.messages);
@@ -995,7 +1023,7 @@ function formatDayLabel(date) {
 }
 
 /* ============================================
-   عرض الرسائل
+   عرض الرسائل (Fallback)
    ============================================ */
 function renderChatMessages() {
   const body = document.getElementById('chatWindowBody');
@@ -1030,21 +1058,16 @@ function renderChatMessages() {
       ].filter(Boolean).join(' ');
 
       const time = formatMessageTime(msg._dateObj);
-      const showAvatar = !isSent && !isSameAsNext;
-
-      const readMark = isSent ? `<span class="chat-message-status">✓✓</span>` : '';
 
       return `
         <div class="${classes}" data-message-id="${msg.id}">
-          ${showAvatar ? `<div class="chat-message-avatar">${escapeHtml((msg.fromName || 'م').charAt(0).toUpperCase())}</div>` : '<div class="chat-message-avatar-spacer"></div>'}
           <div class="chat-message-bubble">
             <div class="chat-message-text">${escapeHtml(msg.text || '')}</div>
             <div class="chat-message-meta">
               <span class="chat-message-time">${time}</span>
-              ${readMark}
+              ${isSent ? '<span class="chat-message-status">✓✓</span>' : ''}
             </div>
           </div>
-          <button class="chat-message-menu" onclick="event.stopPropagation(); showMessageMenu('${msg.id}', ${isSent})" aria-label="خيارات">⋯</button>
         </div>
       `;
     }).join('');
@@ -1094,7 +1117,7 @@ function scrollToBottom(container, smooth = true) {
 }
 
 /* ============================================
-   الاستماع للرسائل
+   الاستماع للرسائل (Fallback)
    ============================================ */
 function listenToMessages(chatId) {
   if (friendsState.unsubscribeMessages) {
@@ -1110,31 +1133,8 @@ function listenToMessages(chatId) {
       (all) => {
         const newMessages = all
           .filter(m => m.chatId === chatId)
-          .map(m => ({
-            ...m,
-            _ts: toTimestamp(m.createdAt)
-          }))
+          .map(m => ({ ...m, _ts: toTimestamp(m.createdAt) }))
           .sort((a, b) => a._ts - b._ts);
-
-        const oldCount = friendsState.messages.length;
-        const newCount = newMessages.length;
-
-        if (oldCount > 0 && newCount > oldCount) {
-          const latest = newMessages[newMessages.length - 1];
-          const myUid = friendsState.currentUser?.uid;
-          const windowHidden = !document.hasFocus() || document.hidden;
-
-          if (latest.fromUid !== myUid && windowHidden) {
-            showInAppNotification({
-              title: `💬 رسالة من ${latest.fromName || 'مستخدم'}`,
-              body: latest.text.slice(0, 80),
-              icon: '💬',
-              color: 'blue',
-              link: 'chat',
-              chatId: chatId
-            });
-          }
-        }
 
         friendsState.messages = newMessages;
         friendsState.groupedMessages = groupMessagesByDay(newMessages);
@@ -1209,6 +1209,9 @@ function listenToTyping(chatId) {
 }
 
 function updateTypingIndicator(peer) {
+  // ✅ ChatFloatWindow يتولى العرض
+  if (window.ChatFloatWindow?.isOpen?.()) return;
+
   const statusEl = document.getElementById('chatWindowStatus');
   if (!statusEl) return;
 
@@ -1222,195 +1225,6 @@ function updateTypingIndicator(peer) {
       statusEl.textContent = status === 'online' ? 'متصل الآن' : 'غير متصل';
       statusEl.classList.remove('typing');
     }
-  }
-}
-
-/* ============================================
-   قائمة خيارات الرسالة
-   ============================================ */
-function showMessageMenu(messageId, isSent) {
-  const msg = friendsState.messages.find(m => m.id === messageId);
-  if (!msg) return;
-
-  document.querySelector('.chat-message-menu-popup')?.remove();
-
-  const menu = document.createElement('div');
-  menu.className = 'chat-message-menu-popup';
-  menu.innerHTML = `
-    <button onclick="copyMessageText('${messageId}')">
-      <span>📋</span> نسخ
-    </button>
-    ${isSent ? `
-      <button class="danger" onclick="deleteMessage('${messageId}')">
-        <span>🗑️</span> حذف
-      </button>
-    ` : ''}
-  `;
-
-  const msgEl = document.querySelector(`[data-message-id="${messageId}"]`);
-  if (!msgEl) return;
-
-  const rect = msgEl.getBoundingClientRect();
-  menu.style.position = 'fixed';
-  menu.style.top = `${rect.top + 10}px`;
-  menu.style.left = `${rect.left + 20}px`;
-
-  document.body.appendChild(menu);
-
-  setTimeout(() => {
-    const close = (e) => {
-      if (!menu.contains(e.target)) {
-        menu.remove();
-        document.removeEventListener('click', close);
-      }
-    };
-    document.addEventListener('click', close);
-  }, 100);
-}
-
-function copyMessageText(messageId) {
-  const msg = friendsState.messages.find(m => m.id === messageId);
-  if (!msg) return;
-
-  navigator.clipboard?.writeText(msg.text || '').then(() => {
-    if (typeof showToast === 'function') showToast('✅ تم النسخ');
-  });
-
-  document.querySelector('.chat-message-menu-popup')?.remove();
-}
-
-async function deleteMessage(messageId) {
-  document.querySelector('.chat-message-menu-popup')?.remove();
-
-  if (!confirm('حذف الرسالة؟')) return;
-
-  try {
-    await window.firebaseHelpers.fbDeleteDoc(MESSAGES_COLLECTION, messageId);
-    if (typeof showToast === 'function') showToast('تم الحذف');
-  } catch (e) {
-    if (typeof showToast === 'function') showToast('تعذر الحذف');
-  }
-}
-
-/* ============================================
-   حذف جميع رسائل المحادثة
-   ============================================ */
-async function clearChatHistory() {
-  if (!requireFriendsLogin()) return;
-  if (!isFirebaseReady()) return;
-  if (!friendsState.activeChat) return;
-
-  const chat = friendsState.activeChat;
-
-  if (!confirm(`⚠️ حذف جميع رسائل المحادثة مع ${chat.displayName}؟\n\nلا يمكن التراجع!`)) {
-    return;
-  }
-
-  if (!confirm('تأكيد نهائي؟')) return;
-
-  if (typeof showToast === 'function') showToast('⏳ جارٍ الحذف...');
-
-  try {
-    const all = await window.firebaseHelpers.fbGetCollection(MESSAGES_COLLECTION);
-    const chatMessages = all.filter(m => m.chatId === chat.id);
-
-    await Promise.all(
-      chatMessages.map(m => window.firebaseHelpers.fbDeleteDoc(MESSAGES_COLLECTION, m.id))
-    );
-
-    await window.firebaseHelpers.fbSetDoc(CHATS_COLLECTION, chat.id, {
-      lastMessage: null,
-      lastMessageAt: new Date().toISOString()
-    });
-
-    friendsState.messages = [];
-    friendsState.groupedMessages = [];
-    renderChatMessages();
-    await loadChats();
-    renderChats();
-
-    if (typeof showToast === 'function') showToast('✅ تم حذف جميع الرسائل');
-  } catch (err) {
-    console.error('[Friends] Clear history error:', err);
-    if (typeof showToast === 'function') showToast('تعذر الحذف');
-  }
-}
-
-/* ============================================
-   قائمة خيارات المحادثة
-   ============================================ */
-function showChatMenu(event) {
-  event.stopPropagation();
-
-  document.querySelector('.chat-window-menu-popup')?.remove();
-
-  const chat = friendsState.activeChat;
-  if (!chat) return;
-
-  const menu = document.createElement('div');
-  menu.className = 'chat-window-menu-popup';
-  menu.innerHTML = `
-    <button onclick="clearChatHistory()">
-      <span>🗑️</span>
-      <span>حذف المحادثة</span>
-    </button>
-    <button onclick="deleteFullChat()" class="danger">
-      <span>❌</span>
-      <span>حذف المحادثة نهائياً</span>
-    </button>
-  `;
-
-  const rect = event.target.getBoundingClientRect();
-  menu.style.position = 'fixed';
-  menu.style.top = `${rect.bottom + 8}px`;
-  menu.style.right = `${window.innerWidth - rect.right}px`;
-
-  document.body.appendChild(menu);
-
-  setTimeout(() => {
-    const close = (e) => {
-      if (!menu.contains(e.target)) {
-        menu.remove();
-        document.removeEventListener('click', close);
-      }
-    };
-    document.addEventListener('click', close);
-  }, 100);
-}
-
-async function deleteFullChat() {
-  document.querySelector('.chat-window-menu-popup')?.remove();
-
-  if (!requireFriendsLogin()) return;
-  if (!isFirebaseReady()) return;
-  if (!friendsState.activeChat) return;
-
-  const chat = friendsState.activeChat;
-
-  if (!confirm(`⚠️ حذف المحادثة نهائياً مع ${chat.displayName}؟\n\nسيتم حذف:\n- المحادثة\n- جميع الرسائل\n\nلا يمكن التراجع!`)) {
-    return;
-  }
-
-  if (!confirm('تأكيد نهائي؟')) return;
-
-  try {
-    const all = await window.firebaseHelpers.fbGetCollection(MESSAGES_COLLECTION);
-    const chatMessages = all.filter(m => m.chatId === chat.id);
-
-    await Promise.all(
-      chatMessages.map(m => window.firebaseHelpers.fbDeleteDoc(MESSAGES_COLLECTION, m.id))
-    );
-
-    await window.firebaseHelpers.fbDeleteDoc(CHATS_COLLECTION, chat.id);
-
-    closeChat();
-    await loadChats();
-    renderChats();
-
-    if (typeof showToast === 'function') showToast('✅ تم حذف المحادثة نهائياً');
-  } catch (err) {
-    console.error('[Friends] Delete full chat error:', err);
-    if (typeof showToast === 'function') showToast('تعذر الحذف');
   }
 }
 
@@ -1458,7 +1272,6 @@ async function sendChatMessage() {
       });
     } catch (e) {}
 
-    // إرسال إشعار Push للطرف الآخر
     if (chat.type === 'private' && chat.otherUser?.uid) {
       await sendNotification(chat.otherUser.uid, {
         type: 'chat_message',
@@ -1502,13 +1315,18 @@ function autoResizeChatInput() {
 function markChatAsRead(chatId) {
   friendsState.lastSeenMessages[chatId] = Date.now();
   friendsState.unreadCounts[chatId] = 0;
-  saveLastSeenMessages(); // ✅ يستخدم الدالة الجديدة
+  saveLastSeenMessages();
   updateTotalUnreadBadge();
   renderChats();
+
+  // ✅ إزالة إشعارات هذه المحادثة
+  if (window.NotificationManager) {
+    window.NotificationManager.clearByChat(chatId);
+  }
 }
 
 /* ============================================
-   إشعارات — عبر Backend Proxy
+   ✅ إشعارات — عبر NotificationManager
    ============================================ */
 async function sendNotification(toUid, data) {
   if (!isFirebaseReady()) return;
@@ -1593,7 +1411,8 @@ function listenToNotifications() {
                    n.type === 'friend_accepted' ? 'green' : 'blue',
             link: n.link,
             chatId: n.chatId,
-            notifId: n.id
+            notifId: n.id,
+            type: n.type
           });
         });
 
@@ -1618,7 +1437,29 @@ function updateNotificationsBadge(count) {
   badge.style.display = count > 0 ? 'flex' : 'none';
 }
 
-function showInAppNotification({ title, body, icon = '🔔', color = 'gold', link, chatId, notifId }) {
+/* ============================================
+   ✅ showInAppNotification — عبر NotificationManager
+   ============================================ */
+function showInAppNotification({ title, body, icon = '🔔', color = 'gold', link, chatId, notifId, type }) {
+  // ✅ استخدام NotificationManager الجديد
+  if (window.NotificationManager) {
+    window.NotificationManager.show({
+      title,
+      body,
+      icon,
+      color,
+      link,
+      chatId,
+      notifId,
+      type: type || (link === 'chat' ? 'chat_message' :
+                     link === 'friends_requests' ? 'friend_request' : 'general')
+    });
+    return;
+  }
+
+  // Fallback: الكود القديم (إن لم يُحمّل Manager)
+  console.warn('NotificationManager not loaded — using fallback');
+
   let container = document.getElementById('inAppNotifications');
   if (!container) {
     container = document.createElement('div');
@@ -1661,8 +1502,6 @@ function showInAppNotification({ title, body, icon = '🔔', color = 'gold', lin
   };
 
   container.appendChild(notif);
-
-  playNotificationSound();
 
   setTimeout(() => {
     notif.classList.add('fade-out');
@@ -1850,12 +1689,7 @@ window.autoResizeChatInput = autoResizeChatInput;
 window.toggleGroupMember = toggleGroupMember;
 window.createGroup = createGroup;
 window.markNotificationRead = markNotificationRead;
-window.showMessageMenu = showMessageMenu;
-window.copyMessageText = copyMessageText;
-window.deleteMessage = deleteMessage;
-window.clearChatHistory = clearChatHistory;
-window.deleteFullChat = deleteFullChat;
-window.showChatMenu = showChatMenu;
+window.showInAppNotification = showInAppNotification;
 
 /* ============================================
    بدء تلقائي
@@ -1881,7 +1715,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             await loadFriends();
             await loadFriendRequests();
             await loadChats();
-            updateUserStatus('online').catch(() => {});
+
+            // ✅ PresenceSystem يتولى الحالة
+            if (window.PresenceSystem) {
+              window.PresenceSystem.start().catch(() => {});
+            }
+
             listenToNotifications();
 
             renderChats();
@@ -1891,13 +1730,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
       } else {
         friendsState.currentUser = null;
+        if (window.PresenceSystem) {
+          window.PresenceSystem.stop().catch(() => {});
+        }
       }
     });
   } catch (e) {}
 });
 
 window.addEventListener('beforeunload', () => {
-  if (friendsState.currentUser) {
-    updateUserStatus('offline').catch(() => {});
+  // ✅ PresenceSystem يتولى الإيقاف
+  if (window.PresenceSystem) {
+    window.PresenceSystem.stop().catch(() => {});
   }
 });

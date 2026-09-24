@@ -1,0 +1,509 @@
+/* ============================================
+   نظام الإشعارات الموحّد — v1.1
+   يشمل: الإشعارات + إعداداتها
+   ============================================ */
+
+/* ============================================
+   الجزء 1: حاوية الإشعارات
+   ============================================ */
+.notif-manager-container {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 6500;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: min(92vw, 420px);
+  pointer-events: none;
+}
+
+/* ===== الإشعار ===== */
+.notif-manager-item {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 44px 14px 16px;
+  background: linear-gradient(135deg, rgba(13, 59, 46, 0.98), rgba(26, 107, 82, 0.98));
+  border: 1.5px solid rgba(212, 175, 55, 0.5);
+  border-radius: 16px;
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.4),
+    0 0 30px rgba(212, 175, 55, 0.2);
+  pointer-events: auto;
+  cursor: pointer;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  opacity: 0;
+  transform: translateY(-30px) scale(0.9);
+  transition: all 0.45s cubic-bezier(0.25, 1, 0.5, 1);
+  overflow: hidden;
+  font-family: Cairo, sans-serif;
+}
+
+.notif-manager-item.show {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.notif-manager-item.hide {
+  opacity: 0;
+  transform: translateY(-30px) scale(0.9);
+}
+
+.notif-manager-item:hover {
+  border-color: #d4af37;
+  box-shadow:
+    0 25px 60px rgba(0, 0, 0, 0.5),
+    0 0 40px rgba(212, 175, 55, 0.4);
+  transform: translateY(-2px);
+}
+
+/* ===== Pulse عند التحديث ===== */
+.notif-manager-item.pulse {
+  animation: notifPulse 0.6s ease;
+}
+
+@keyframes notifPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.03); box-shadow: 0 0 50px rgba(212, 175, 55, 0.7); }
+  100% { transform: scale(1); }
+}
+
+/* ===== تلوين حسب الحالة ===== */
+.notif-manager-item[data-color="gold"] { border-color: rgba(212, 175, 55, 0.6); }
+.notif-manager-item[data-color="green"] { border-color: rgba(127, 232, 168, 0.6); }
+.notif-manager-item[data-color="blue"] { border-color: rgba(158, 197, 255, 0.6); }
+.notif-manager-item[data-color="red"] { border-color: rgba(255, 138, 122, 0.6); }
+.notif-manager-item[data-color="purple"] { border-color: rgba(200, 168, 255, 0.6); }
+
+/* ===== تلوين حسب الأولوية ===== */
+.notif-manager-item[data-priority="high"] {
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.4),
+    0 0 40px rgba(212, 175, 55, 0.4);
+}
+
+.notif-manager-item[data-priority="low"] {
+  opacity: 0.9;
+}
+
+/* ===== الخلفية المتوهجة ===== */
+.notif-manager-item::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 0% 50%, rgba(212, 175, 55, 0.15), transparent 60%);
+  pointer-events: none;
+}
+
+/* ===== الأيقونة ===== */
+.notif-manager-icon {
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 12px;
+  font-size: 1.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* ===== المحتوى ===== */
+.notif-manager-content {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.notif-manager-title {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #f5f1e8;
+  margin-bottom: 4px;
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.notif-manager-body {
+  margin: 0;
+  font-size: 0.82rem;
+  color: rgba(245, 241, 232, 0.75);
+  line-height: 1.5;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+/* ===== الزر ===== */
+.notif-manager-action {
+  margin-top: 8px;
+  padding: 6px 14px;
+  background: rgba(212, 175, 55, 0.15);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  border-radius: 50px;
+  color: #d4af37;
+  font-family: Cairo, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.notif-manager-action:hover {
+  background: #d4af37;
+  color: #0d3b2e;
+  transform: translateY(-1px);
+}
+
+/* ===== زر الإغلاق ===== */
+.notif-manager-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+  color: #f5f1e8;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  z-index: 2;
+  padding: 0;
+}
+
+html[dir="ltr"] .notif-manager-close {
+  right: auto;
+  left: 8px;
+}
+
+.notif-manager-close:hover {
+  background: #c0392b;
+  color: white;
+  border-color: #c0392b;
+  transform: rotate(90deg) scale(1.1);
+}
+
+/* ===== Badge (عدد الرسائل) ===== */
+.notif-manager-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 8px;
+  background: linear-gradient(135deg, #ff4757, #e74c3c);
+  color: white;
+  border-radius: 50px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(255, 71, 87, 0.5);
+  z-index: 2;
+  animation: notifBadgePulse 2s ease-in-out infinite;
+}
+
+html[dir="ltr"] .notif-manager-badge {
+  left: auto;
+  right: 8px;
+}
+
+@keyframes notifBadgePulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+/* ============================================
+   الجزء 2: صفحة إعدادات الإشعارات
+   ============================================ */
+.notif-settings-panel {
+  padding: 20px;
+  background: var(--card-bg, rgba(13, 59, 46, 0.45));
+  border: 1px solid var(--card-border, rgba(212, 175, 55, 0.2));
+  border-radius: 18px;
+  margin: 20px 0;
+  font-family: Cairo, sans-serif;
+}
+
+.notif-settings-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+  margin-bottom: 20px;
+}
+
+.notif-settings-header h3 {
+  margin: 0;
+  color: #d4af37;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.notif-settings-icon {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #d4af37, #e6c869);
+  border-radius: 12px;
+  font-size: 1.3rem;
+  box-shadow: 0 6px 18px rgba(212, 175, 55, 0.4);
+  flex-shrink: 0;
+}
+
+/* ===== مجموعة إعدادات ===== */
+.notif-settings-group {
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  border-radius: 14px;
+  margin-bottom: 14px;
+}
+
+.notif-settings-group-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #d4af37;
+  margin-bottom: 14px;
+}
+
+/* ===== صف الإعداد ===== */
+.notif-setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+}
+
+.notif-setting-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.notif-setting-label {
+  flex: 1;
+  color: #f5f1e8;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.notif-setting-desc {
+  display: block;
+  font-size: 0.72rem;
+  color: rgba(245, 241, 232, 0.5);
+  font-weight: 500;
+  margin-top: 3px;
+}
+
+/* ===== Switch ===== */
+.notif-switch {
+  position: relative;
+  width: 46px;
+  height: 26px;
+  flex-shrink: 0;
+}
+
+.notif-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.notif-switch-slider {
+  position: absolute;
+  inset: 0;
+  background: rgba(245, 241, 232, 0.2);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 26px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.notif-switch-slider::before {
+  content: '';
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  left: 3px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(245, 241, 232, 0.8);
+  border-radius: 50%;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.notif-switch input:checked + .notif-switch-slider {
+  background: #d4af37;
+  border-color: #d4af37;
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+}
+
+.notif-switch input:checked + .notif-switch-slider::before {
+  transform: translateY(-50%) translateX(20px);
+  background: #0d3b2e;
+}
+
+/* ===== Time Inputs ===== */
+.notif-time-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.notif-time-field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.notif-time-field label {
+  font-size: 0.72rem;
+  color: rgba(245, 241, 232, 0.6);
+  font-weight: 600;
+}
+
+.notif-time-input {
+  padding: 10px 14px;
+  background: rgba(245, 241, 232, 0.05);
+  border: 1.5px solid rgba(212, 175, 55, 0.3);
+  border-radius: 10px;
+  color: #f5f1e8;
+  font-family: Cairo, sans-serif;
+  font-size: 0.9rem;
+  text-align: center;
+  outline: none;
+  transition: all 0.25s ease;
+}
+
+.notif-time-input:focus {
+  border-color: #d4af37;
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+}
+
+/* ===== إحصائيات ===== */
+.notif-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.notif-stat-card {
+  padding: 14px 10px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: 12px;
+  text-align: center;
+}
+
+.notif-stat-value {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #d4af37;
+  line-height: 1.1;
+  margin-bottom: 4px;
+}
+
+.notif-stat-label {
+  font-size: 0.7rem;
+  color: rgba(245, 241, 232, 0.6);
+  font-weight: 600;
+}
+
+/* ===== زر إعادة تعيين ===== */
+.notif-reset-btn {
+  width: 100%;
+  padding: 12px;
+  background: rgba(192, 57, 43, 0.15);
+  border: 1.5px solid rgba(192, 57, 43, 0.4);
+  border-radius: 12px;
+  color: #ff8a7a;
+  font-family: Cairo, sans-serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  margin-top: 10px;
+}
+
+.notif-reset-btn:hover {
+  background: #c0392b;
+  color: white;
+  border-color: #c0392b;
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+@media (max-width: 500px) {
+  .notif-manager-container {
+    top: 12px;
+    width: calc(100vw - 20px);
+  }
+
+  .notif-manager-item {
+    padding: 12px 40px 12px 14px;
+    border-radius: 14px;
+  }
+
+  .notif-manager-icon {
+    width: 38px;
+    height: 38px;
+    font-size: 1.3rem;
+  }
+
+  .notif-manager-title {
+    font-size: 0.88rem;
+  }
+
+  .notif-manager-body {
+    font-size: 0.78rem;
+  }
+
+  .notif-settings-panel {
+    padding: 16px;
+    border-radius: 14px;
+  }
+
+  .notif-stat-card {
+    padding: 12px 6px;
+  }
+
+  .notif-stat-value {
+    font-size: 1.3rem;
+  }
+
+  .notif-time-row {
+    flex-direction: column;
+  }
+}

@@ -280,9 +280,15 @@ async function loginUser(usernameOrEmail, password, remember = true) {
 }
 
 async function logoutUser() {
+  // ✅ إيقاف Presence قبل تسجيل الخروج
+  if (window.PresenceSystem) {
+    await window.PresenceSystem.stop().catch(() => {});
+  }
+
   try {
     if (window.firebaseHelpers) await window.firebaseHelpers.fbSignOut();
   } catch (e) {}
+
   currentFirebaseUser = null;
   renderAuthWidget();
   populateProfileData();
@@ -478,6 +484,11 @@ function afterAuthSuccess(message) {
   document.getElementById('loginForm')?.reset();
   document.getElementById('registerForm')?.reset();
   if (typeof refreshPublicSurfaces === 'function') refreshPublicSurfaces();
+
+  // ✅ إطلاق event لبدء Presence
+  window.dispatchEvent(new CustomEvent('auth-state-changed', {
+    detail: { user: getCurrentUser() }
+  }));
 }
 
 function populateProfileData() {
@@ -822,11 +833,16 @@ async function initAuthState() {
     } else {
       currentFirebaseUser = null;
     }
-    authStateReady = true;
+       authStateReady = true;
     renderAuthWidget();
     populateProfileData();
     if (typeof applyAuthGate === 'function') applyAuthGate();
     if (typeof refreshPublicSurfaces === 'function') refreshPublicSurfaces();
+
+    // ✅ إطلاق event
+    window.dispatchEvent(new CustomEvent('auth-state-changed', {
+      detail: { user: getCurrentUser() }
+    }));
   });
 }
 

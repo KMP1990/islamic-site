@@ -196,11 +196,12 @@ async function sendPushNotification(toUid, data = {}) {
     }
 
     // أرسل الإشعار عبر ntfy.sh
-    const response = await fetch(`${NOTIFICATION_CONFIG.NTFY_BASE_URL}/${topic}`, {
+        const response = await fetch(`${NOTIFICATION_CONFIG.NTFY_BASE_URL}/${topic}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Title': encodeURIComponent(data.title || 'إشعار جديد'),
+        // ✅ إصلاح: استخدام RFC 2047 Encoding للعناوين
+        'Title': encodeRFC2047(data.title || 'إشعار جديد'),
         'Priority': data.priority || 'default',
         'Tags': data.icon || 'bell'
       },
@@ -347,7 +348,28 @@ function handleIncomingNotification(data) {
   // عرض إشعار محلي
   showLocalNotification({ title, body, chatId: message.chatId });
 }
+/* ============================================
+   ✅ ترميز RFC 2047 — للعربية الصحيحة
+   ============================================ */
+function encodeRFC2047(text) {
+  if (!text) return '';
 
+  try {
+    // UTF-8 → Base64
+    const utf8 = new TextEncoder().encode(text);
+    let binary = '';
+    for (let i = 0; i < utf8.length; i++) {
+      binary += String.fromCharCode(utf8[i]);
+    }
+    const base64 = btoa(binary);
+
+    // RFC 2047: =?UTF-8?B?<base64>?=
+    return `=?UTF-8?B?${base64}?=`;
+  } catch (e) {
+    // Fallback
+    return text;
+  }
+}
 /* ===== التصدير ===== */
 window.notificationSystem = {
   init: () => Promise.resolve(true),

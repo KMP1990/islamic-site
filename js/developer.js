@@ -1,4 +1,4 @@
-/* ===== لوحة المطور — Firebase + Cloud Sync (v7.0) ===== */
+/* ===== لوحة المطور — Firebase + Cloud Sync (v7.1) ===== */
 
 const DEV_SETTINGS_KEY = 'tariq_dev_settings';
 const DEV_DISMISSED_ADS_KEY = 'tariq_dismissed_ads_v1';
@@ -139,7 +139,7 @@ function contentStatusLabel(item) {
 function validateContentInput({ title, link, image, startsAt, endsAt }, notify = true) {
   let error = '';
   if (!title || title.length > 80) error = 'اكتب عنوانًا من 1 إلى 80 حرفًا';
-  else if ((link && !LocalSecurity.safeUrl(link)) || (image && !LocalSecurity.safeUrl(image))) error = 'الروابط يجب أن تبدأ بـ https:// أو http://';
+  else if ((link && !LocalSecurity.safeUrl(link)) || (image && image.startsWith('http') && !LocalSecurity.safeUrl(image))) error = 'الروابط يجب أن تبدأ بـ https:// أو http://';
   else if ((startsAt && !Number.isFinite(Date.parse(startsAt))) || (endsAt && !Number.isFinite(Date.parse(endsAt)))) error = 'التاريخ غير صحيح';
   else if (startsAt && endsAt && Date.parse(startsAt) >= Date.parse(endsAt)) error = 'تاريخ النهاية يجب أن يكون بعد البداية';
   if (error && notify) showToast(error);
@@ -223,8 +223,12 @@ function renderDeveloperSettings() {
   });
 }
 
-/* ===== التبويبات ===== */
+/* ============================================
+   ✅ التبويبات — محدّثة
+   ============================================ */
 function switchDeveloperTab(tab) {
+  console.log('🎯 switchDeveloperTab:', tab);
+
   document.querySelectorAll('[data-dev-tab]').forEach(button => {
     button.classList.toggle('active', button.dataset.devTab === tab);
   });
@@ -232,20 +236,98 @@ function switchDeveloperTab(tab) {
     panel.classList.toggle('hidden', panel.dataset.devPanel !== tab);
   });
 
-  const actions = {
-    overview: renderDeveloperOverview,
-    news: renderDeveloperEvents,
-    ads: renderDeveloperAds,
-    users: renderRegisteredUsers,
-    settings: renderDeveloperSettings,
-    stats: renderAdvancedStats,
-    features: renderFeaturesGrid,
-    messages: renderDevMessagesList,
-    banned: renderBannedDevices,
-    tools: renderDevTools
-  };
+  try {
+    switch (tab) {
+      case 'overview':
+        if (typeof renderDeveloperOverview === 'function') renderDeveloperOverview();
+        break;
 
-  if (actions[tab]) actions[tab]();
+      case 'analytics':
+        if (window.AdminAnalytics?.onTabOpen) {
+          window.AdminAnalytics.onTabOpen();
+        } else {
+          console.warn('⚠️ AdminAnalytics not loaded');
+        }
+        break;
+
+      case 'news':
+        if (typeof renderDeveloperEvents === 'function') renderDeveloperEvents();
+        break;
+
+      case 'ads':
+        if (typeof renderDeveloperAds === 'function') renderDeveloperAds();
+        break;
+
+      case 'users':
+        if (window.AdminUsers?.onTabOpen) {
+          window.AdminUsers.onTabOpen();
+        } else if (typeof renderRegisteredUsers === 'function') {
+          renderRegisteredUsers();
+        }
+        break;
+
+      case 'appearance':
+        if (window.AdminAppearance?.onTabOpen) {
+          window.AdminAppearance.onTabOpen();
+        } else {
+          console.warn('⚠️ AdminAppearance not loaded');
+        }
+        break;
+
+      case 'audit':
+        if (window.AdminAuditLog?.onTabOpen) {
+          window.AdminAuditLog.onTabOpen();
+        } else {
+          console.warn('⚠️ AdminAuditLog not loaded');
+        }
+        break;
+
+      case 'settings':
+        if (typeof renderDeveloperSettings === 'function') renderDeveloperSettings();
+        break;
+
+      case 'stats':
+        if (typeof renderAdvancedStats === 'function') renderAdvancedStats();
+        break;
+
+      case 'features':
+        if (typeof renderFeaturesGrid === 'function') renderFeaturesGrid();
+        break;
+
+      case 'messages':
+        if (typeof renderDevMessagesList === 'function') renderDevMessagesList();
+        break;
+
+      case 'banned':
+        if (typeof renderBannedDevices === 'function') renderBannedDevices();
+        break;
+
+      case 'tools':
+        if (window.AdminTools?.onToolsOpen) {
+          window.AdminTools.onToolsOpen();
+        } else if (typeof renderDevTools === 'function') {
+          renderDevTools();
+        }
+        break;
+
+      case 'webhooks':
+        if (window.AdminTools?.renderWebhooks) {
+          window.AdminTools.renderWebhooks();
+        } else {
+          console.warn('⚠️ AdminTools not loaded');
+        }
+        break;
+
+      case 'backup':
+        // لا يوجد إجراء — الصفحة جاهزة
+        break;
+
+      default:
+        console.log('⚠️ Unknown tab:', tab);
+    }
+  } catch (err) {
+    console.error('❌ switchDeveloperTab error:', err);
+  }
 }
 
 /* ===== دخول المطور ===== */
@@ -524,7 +606,7 @@ async function renderAdvancedStats() {
       <div class="dev-tools-grid" id="devToolsGrid"></div>
     `;
 
-    renderDevTools();
+    if (typeof renderDevTools === 'function') renderDevTools();
   } catch (err) {
     console.error('[Developer] Stats error:', err);
     container.innerHTML = '<p class="developer-empty">تعذر تحميل الإحصائيات</p>';
@@ -913,7 +995,7 @@ function fillNewsForm(event) {
   document.getElementById('developerEventTitle').value = event.title || '';
   document.getElementById('developerEventDescription').value = event.description || '';
   document.getElementById('developerEventLink').value = event.link || '';
-  document.getElementById('developerEventImage').value = LocalSecurity.safeUrl(event.image || '');
+  document.getElementById('developerEventImage').value = event.image && event.image.startsWith('http') ? event.image : '';
   document.getElementById('developerEventCategory').value = event.type || 'news';
   document.getElementById('developerEventPriority').value = event.priority || 50;
   document.getElementById('developerEventStarts').value = event.startsAt || '';
@@ -924,9 +1006,10 @@ function fillNewsForm(event) {
 
   const preview = document.getElementById('developerImagePreview');
   if (preview) {
-    if (developerImageData) preview.src = developerImageData;
+    if (event.image) preview.src = event.image;
     else preview.removeAttribute('src');
   }
+
   const submit = document.getElementById('developerEventSubmit');
   if (submit) submit.textContent = 'حفظ التعديل';
   switchDeveloperTab('news');
@@ -944,7 +1027,8 @@ async function saveDeveloperEvent() {
   const pinned = document.getElementById('developerEventPinned')?.checked;
   const active = document.getElementById('developerEventActive').checked;
   const priority = Number(document.getElementById('developerEventPriority').value || 50);
-  const image = document.getElementById('developerEventImage').value.trim();
+  const imageUrl = document.getElementById('developerEventImage').value.trim();
+  const image = developerImageData || imageUrl;
 
   if (!validateContentInput({ title, link, image, startsAt, endsAt })) return;
 
@@ -952,7 +1036,9 @@ async function saveDeveloperEvent() {
   const eventData = {
     title, description, link, startsAt, endsAt, image,
     type: category, featured, pinned: !!pinned, active,
-    priority: Number.isFinite(priority) ? Math.min(100, Math.max(1, priority)) : 50
+    priority: Number.isFinite(priority) ? Math.min(100, Math.max(1, priority)) : 50,
+    authorName: window.authApi?.getCurrentUser?.()?.fullName || 'المطور',
+    authorEmail: window.authApi?.getCurrentUser?.()?.email || 'developer'
   };
 
   try {
@@ -968,7 +1054,8 @@ async function saveDeveloperEvent() {
     await renderHomeEvents();
     showToast(wasEditing ? '✅ تم تحديث الخبر' : '✅ تم نشر الخبر');
   } catch (err) {
-    showToast('تعذر حفظ الخبر: ' + err.message);
+    console.error('[Developer] Save news error:', err);
+    showToast('تعذر حفظ الخبر: ' + (err.message || err.code || 'خطأ'));
   }
 }
 
@@ -1133,10 +1220,13 @@ async function renderHomeEvents() {
 
   events.forEach((event, index) => {
     const badge = event.pinned ? '📌 مثبّت' : event.featured ? '⭐ مميز' : '📰 خبر';
-    const image = LocalSecurity.safeUrl(event.image || '');
+    const image = event.image || '';
     const link = LocalSecurity.safeUrl(event.link || '');
     const media = image ? `<img src="${developerEscape(image)}" alt="" loading="lazy">` : '';
-    const content = `<div class="home-event-copy"><span class="home-event-label">${badge}</span><h2>${developerEscape(event.title)}</h2><p>${developerEscape(event.description || '')}</p></div>`;
+    const authorHtml = event.authorName
+      ? `<span class="home-event-author">${developerEscape(event.authorName)}</span>`
+      : '';
+    const content = `<div class="home-event-copy">${authorHtml}<span class="home-event-label">${badge}</span><h2>${developerEscape(event.title)}</h2><p>${developerEscape(event.description || '')}</p></div>`;
 
     const card = link
       ? `<a class="home-event-card" href="${developerEscape(link)}" target="_blank" rel="noopener noreferrer" style="animation-delay:${index * 0.05}s">${media}${content}<span class="home-event-arrow">↗</span></a>`
@@ -1176,7 +1266,7 @@ function fillAdForm(ad) {
     developerAdTitle: ad.title,
     developerAdBody: ad.body,
     developerAdLink: ad.link,
-    developerAdImage: LocalSecurity.safeUrl(ad.image || ''),
+    developerAdImage: ad.image && ad.image.startsWith('http') ? ad.image : '',
     developerAdCta: ad.cta || 'معرفة المزيد',
     developerAdAudience: ad.audience || 'all',
     developerAdPriority: ad.priority || 50,
@@ -1192,7 +1282,7 @@ function fillAdForm(ad) {
   document.getElementById('developerAdDismissible').checked = ad.dismissible !== false;
   const preview = document.getElementById('developerAdImagePreview');
   if (preview) {
-    if (developerAdImageData) preview.src = developerAdImageData;
+    if (ad.image) preview.src = ad.image;
     else preview.removeAttribute('src');
   }
   document.getElementById('developerAdSubmit').textContent = 'حفظ الإعلان';
@@ -1209,7 +1299,8 @@ async function saveDeveloperAd() {
   const endsAt = document.getElementById('developerAdEnds').value;
   const active = document.getElementById('developerAdActive').checked;
   const dismissible = document.getElementById('developerAdDismissible').checked;
-  const image = document.getElementById('developerAdImage').value.trim();
+  const imageUrl = document.getElementById('developerAdImage').value.trim();
+  const image = developerAdImageData || imageUrl;
 
   if (!validateContentInput({ title, link, image, startsAt, endsAt })) return;
 
@@ -1361,7 +1452,7 @@ function renderAdCard(ad, variant = 'banner', preview = false) {
   const closeBtn = !preview && (ad.dismissible !== false || ad.placement === 'popup')
     ? `<button class="ad-dismiss" type="button" onclick="event.preventDefault(); event.stopPropagation(); dismissHomeAd('${developerEscape(ad.id)}')">✕</button>`
     : '';
-  const image = LocalSecurity.safeUrl(ad.image || '');
+  const image = ad.image || '';
   const link = LocalSecurity.safeUrl(ad.link || '');
   const media = image ? `<img src="${developerEscape(image)}" alt="" loading="lazy">` : '';
   const cta = link ? `<a class="ad-cta" href="${developerEscape(link)}" target="_blank" rel="noopener noreferrer">${developerEscape(ad.cta || 'معرفة المزيد')} ↗</a>` : '';
@@ -1544,7 +1635,7 @@ async function toggleUserBanned(uid, banned) {
 }
 
 /* ============================================
-   نظام حظر الأجهزة — مع Cloud Sync
+   نظام حظر الأجهزة
    ============================================ */
 function getBannedDevices() {
   return getStoredJson(DEV_BANNED_DEVICES_KEY, []);
@@ -1571,7 +1662,7 @@ async function banDeviceFromPanel() {
     fingerprint: fp,
     reason,
     bannedAt: new Date().toISOString(),
-    bannedBy: window.authApi?.getCurrentUser()?.email || 'developer'
+    bannedBy: window.authApi?.getCurrentUser?.()?.email || 'developer'
   };
 
   if (window.cloudSync) {
@@ -1673,7 +1764,7 @@ async function exportDeveloperData() {
       exportedAt: new Date().toISOString(),
       settings: getDeveloperSettings(),
       features: typeof getFeatures === 'function' ? getFeatures() : {},
-      messages: getDevMessages(),
+      messages: typeof getDevMessages === 'function' ? getDevMessages() : [],
       bannedDevices: getBannedDevices(),
       news, ads, users
     };
@@ -1726,7 +1817,7 @@ function refreshHomeNewsTimer() {
   homeNewsRefreshTimer = setInterval(() => {
     renderHomeEvents();
     renderHomeAds();
-    renderDevMessages();
+    if (typeof renderDevMessages === 'function') renderDevMessages();
   }, Number(settings.autoRefreshMinutes) * 60 * 1000);
 }
 
@@ -1755,7 +1846,8 @@ function runDeveloperAction(action) {
 /* ===== Preview ===== */
 function previewContentImage(kind) {
   const prefix = kind === 'news' ? 'developerEvent' : 'developerAd';
-  const image = LocalSecurity.safeUrl(document.getElementById(`${prefix}Image`).value.trim());
+  const imageUrl = document.getElementById(`${prefix}Image`)?.value.trim() || '';
+  const image = imageUrl.startsWith('http') ? LocalSecurity.safeUrl(imageUrl) : imageUrl;
   const target = document.getElementById(kind === 'news' ? 'developerImagePreview' : 'developerAdImagePreview');
   if (image) target.src = image;
   else target.removeAttribute('src');
@@ -1765,7 +1857,8 @@ function previewContent(kind) {
   if (!requireDeveloper()) return;
   const prefix = kind === 'news' ? 'developerEvent' : 'developerAd';
   const title = document.getElementById(`${prefix}Title`).value.trim() || 'عنوان المحتوى';
-  const image = LocalSecurity.safeUrl(document.getElementById(`${prefix}Image`).value.trim());
+  const imageUrl = document.getElementById(`${prefix}Image`).value.trim();
+  const image = imageUrl.startsWith('http') ? LocalSecurity.safeUrl(imageUrl) : imageUrl;
   const body = document.getElementById(kind === 'news' ? 'developerEventDescription' : 'developerAdBody').value;
   const target = document.getElementById('contentPreviewBody');
   if (kind === 'ads') {
@@ -1875,7 +1968,7 @@ async function handleFeatureToggle(key, enabled) {
 }
 
 /* ============================================
-   الرسائل — مع Cloud Sync
+   الرسائل
    ============================================ */
 function getDevMessages() {
   try {
@@ -1909,7 +2002,7 @@ async function addDevMessage() {
     dismissible: dismissibleEl?.checked !== false,
     createdAt: Date.now(),
     active: true,
-    createdBy: window.authApi?.getCurrentUser()?.email || 'developer'
+    createdBy: window.authApi?.getCurrentUser?.()?.email || 'developer'
   };
 
   if (window.cloudSync) {
@@ -1930,7 +2023,7 @@ async function addDevMessage() {
   if (bodyEl) bodyEl.value = '';
 
   renderDevMessagesList();
-  renderDevMessages();
+  if (typeof renderDevMessages === 'function') renderDevMessages();
   recordDeveloperActivity(`رسالة: ${title}`);
   showToast('✅ تم النشر لجميع الزوار');
 }
@@ -1952,7 +2045,7 @@ async function deleteDevMessage(id) {
   }
 
   renderDevMessagesList();
-  renderDevMessages();
+  if (typeof renderDevMessages === 'function') renderDevMessages();
   showToast('✅ تم الحذف');
 }
 
@@ -1974,71 +2067,7 @@ async function toggleDevMessageStatus(id) {
   }
 
   renderDevMessagesList();
-  renderDevMessages();
-}
-
-function renderDevMessages() {
-  const container = document.getElementById('devMessagesContainer');
-  if (!container) return;
-
-  if (typeof isFeatureEnabled === 'function' && !isFeatureEnabled('messages_system')) {
-    container.innerHTML = '';
-    return;
-  }
-
-  const messages = getDevMessages().filter(m => m.active !== false);
-  const existingIds = new Set(messages.map(m => m.id));
-
-  container.querySelectorAll('.dev-message').forEach(el => {
-    if (!existingIds.has(el.dataset.id)) {
-      el.classList.remove('show');
-      setTimeout(() => el.remove(), 400);
-    }
-  });
-
-  messages.forEach(msg => {
-    if (container.querySelector(`[data-id="${msg.id}"]`)) return;
-
-    let dismissed = [];
-    try { dismissed = JSON.parse(sessionStorage.getItem('dismissed_dev_messages') || '[]'); } catch {}
-    if (dismissed.includes(msg.id)) return;
-
-    const el = document.createElement('div');
-    el.className = 'dev-message';
-    el.dataset.id = msg.id;
-    el.dataset.color = msg.color;
-
-    const dismissBtn = msg.dismissible !== false
-      ? `<button class="dev-message-close" onclick="dismissDevMessage('${msg.id}')" aria-label="إغلاق">✕</button>`
-      : '';
-
-    el.innerHTML = `
-      ${dismissBtn}
-      <div class="dev-message-icon">${msg.icon || '📢'}</div>
-      <div class="dev-message-content">
-        <strong class="dev-message-title">${developerEscape(msg.title)}</strong>
-        ${msg.body ? `<p class="dev-message-body">${developerEscape(msg.body)}</p>` : ''}
-      </div>
-    `;
-
-    container.appendChild(el);
-    requestAnimationFrame(() => setTimeout(() => el.classList.add('show'), 50));
-  });
-}
-
-function dismissDevMessage(id) {
-  const el = document.querySelector(`.dev-message[data-id="${id}"]`);
-  if (el) {
-    el.classList.remove('show');
-    setTimeout(() => el.remove(), 400);
-  }
-  try {
-    const dismissed = JSON.parse(sessionStorage.getItem('dismissed_dev_messages') || '[]');
-    if (!dismissed.includes(id)) {
-      dismissed.push(id);
-      sessionStorage.setItem('dismissed_dev_messages', JSON.stringify(dismissed));
-    }
-  } catch {}
+  if (typeof renderDevMessages === 'function') renderDevMessages();
 }
 
 function renderDevMessagesList() {
@@ -2097,6 +2126,104 @@ function previewDevMessage() {
   setTimeout(() => el.remove(), 5000);
 }
 
+/* ============================================
+   ✅ رفع صور من الجهاز
+   ============================================ */
+async function handleNewsImageUpload(event) {
+  const file = event.target.files?.[0];
+  if (!file) return;
+
+  if (file.size > 500 * 1024) {
+    showToast('الصورة كبيرة جداً — الحد الأقصى 500KB');
+    event.target.value = '';
+    return;
+  }
+
+  if (!file.type.startsWith('image/')) {
+    showToast('الملف ليس صورة');
+    event.target.value = '';
+    return;
+  }
+
+  try {
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+      const dataUrl = e.target.result;
+      const img = new Image();
+
+      img.onload = () => {
+        try {
+          const canvas = document.createElement('canvas');
+          const maxWidth = 1200;
+          const scale = Math.min(1, maxWidth / img.width);
+
+          canvas.width = Math.round(img.width * scale);
+          canvas.height = Math.round(img.height * scale);
+
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+          const compressed = canvas.toDataURL('image/jpeg', 0.85);
+          developerImageData = compressed;
+
+          const linkInput = document.getElementById('developerEventImage');
+          if (linkInput) linkInput.value = '';
+
+          const preview = document.getElementById('developerImagePreview');
+          if (preview) preview.src = compressed;
+
+          const info = document.getElementById('developerEventImageInfo');
+          if (info) {
+            const sizeKB = Math.round((compressed.length * 0.75) / 1024);
+            info.textContent = `📐 ${img.width} × ${img.height}px · 📦 ~${sizeKB} KB`;
+          }
+
+          const removeBtn = document.getElementById('developerEventImageRemove');
+          if (removeBtn) removeBtn.style.display = 'inline-flex';
+
+          showToast('✅ تم رفع الصورة');
+        } catch (err) {
+          console.error('[Image] Compress failed:', err);
+          showToast('تعذر معالجة الصورة');
+        }
+      };
+
+      img.onerror = () => showToast('تعذر قراءة الصورة');
+      img.src = dataUrl;
+    };
+
+    reader.onerror = () => showToast('تعذر قراءة الملف');
+    reader.readAsDataURL(file);
+  } catch (err) {
+    console.error('[Image] Upload failed:', err);
+    showToast('تعذر رفع الصورة');
+  } finally {
+    event.target.value = '';
+  }
+}
+
+function removeNewsImage() {
+  developerImageData = '';
+
+  const linkInput = document.getElementById('developerEventImage');
+  if (linkInput) linkInput.value = '';
+
+  const fileInput = document.getElementById('developerEventImageFile');
+  if (fileInput) fileInput.value = '';
+
+  const preview = document.getElementById('developerImagePreview');
+  if (preview) preview.removeAttribute('src');
+
+  const info = document.getElementById('developerEventImageInfo');
+  if (info) info.textContent = '';
+
+  const removeBtn = document.getElementById('developerEventImageRemove');
+  if (removeBtn) removeBtn.style.display = 'none';
+
+  showToast('🗑️ تم حذف الصورة');
+}
+
 /* ===== بدء ===== */
 document.addEventListener('DOMContentLoaded', () => {
   refreshPublicSurfaces();
@@ -2137,10 +2264,12 @@ document.addEventListener('DOMContentLoaded', () => {
   setInterval(() => {
     renderHomeEvents();
     renderHomeAds();
-    renderDevMessages();
+    if (typeof renderDevMessages === 'function') renderDevMessages();
   }, 60000);
 
-  setTimeout(renderDevMessages, 1500);
+  if (typeof renderDevMessages === 'function') {
+    setTimeout(renderDevMessages, 1500);
+  }
 });
 
 document.addEventListener('keydown', event => {
@@ -2209,8 +2338,6 @@ window.handleFeatureToggle = handleFeatureToggle;
 window.addDevMessage = addDevMessage;
 window.deleteDevMessage = deleteDevMessage;
 window.toggleDevMessageStatus = toggleDevMessageStatus;
-window.dismissDevMessage = dismissDevMessage;
-window.renderDevMessages = renderDevMessages;
 window.renderDevMessagesList = renderDevMessagesList;
 window.previewDevMessage = previewDevMessage;
 window.getDevMessages = getDevMessages;
@@ -2220,3 +2347,7 @@ window.banDeviceFromPanel = banDeviceFromPanel;
 window.unbanDevice = unbanDevice;
 window.banMyDevice = banMyDevice;
 window.renderBannedDevices = renderBannedDevices;
+
+window.handleNewsImageUpload = handleNewsImageUpload;
+window.removeNewsImage = removeNewsImage;
+window.previewContentImage = previewContentImage;

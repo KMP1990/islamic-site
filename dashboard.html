@@ -31,11 +31,16 @@
   <link rel="stylesheet" href="css/names.css" />
   <link rel="stylesheet" href="css/ziyarat.css" />
   <link rel="stylesheet" href="css/istikhara.css" />
+  <link rel="stylesheet" href="css/istikhara-v2.css" />
   <link rel="stylesheet" href="css/pwa.css" />
   <link rel="stylesheet" href="css/management.css" />
   <link rel="stylesheet" href="css/features.css" />
   <link rel="stylesheet" href="css/settings.css" />
   <link rel="stylesheet" href="css/friends.css" />
+  <link rel="stylesheet" href="css/chat-window.css" />
+  <link rel="stylesheet" href="css/notifications.css" />
+  <link rel="stylesheet" href="css/admin-users.css" />
+  <link rel="stylesheet" href="css/admin-v2-extras.css" />
 </head>
 <body>
 
@@ -400,18 +405,22 @@
       <p class="local-notice">إدارة سحابية. كل التغييرات تُحفظ في Firebase وتظهر لجميع الزوار مباشرة.</p>
 
       <nav class="developer-tabs" aria-label="أقسام الإدارة">
-        <button type="button" class="active" data-dev-tab="overview" onclick="switchDeveloperTab('overview')">📊 نظرة عامة</button>
-        <button type="button" data-dev-tab="stats" onclick="switchDeveloperTab('stats')">📈 إحصائيات</button>
-        <button type="button" data-dev-tab="news" onclick="switchDeveloperTab('news')">📰 الأخبار</button>
-        <button type="button" data-dev-tab="ads" onclick="switchDeveloperTab('ads')">💰 الإعلانات</button>
-        <button type="button" data-dev-tab="messages" onclick="switchDeveloperTab('messages')">📢 الرسائل</button>
-        <button type="button" data-dev-tab="features" onclick="switchDeveloperTab('features')">🎛️ الميزات</button>
-        <button type="button" data-dev-tab="users" onclick="switchDeveloperTab('users')">👥 المستخدمون</button>
-        <button type="button" data-dev-tab="banned" onclick="switchDeveloperTab('banned')">🚫 الأجهزة المحظورة</button>
-        <button type="button" data-dev-tab="settings" onclick="switchDeveloperTab('settings')">⚙️ الإعدادات</button>
-        <button type="button" data-dev-tab="tools" onclick="switchDeveloperTab('tools')">🧰 الأدوات</button>
-        <button type="button" data-dev-tab="backup" onclick="switchDeveloperTab('backup')">💾 النسخ الاحتياطي</button>
-      </nav>
+  <button type="button" class="active" data-dev-tab="overview" onclick="switchDeveloperTab('overview')">📊 نظرة عامة</button>
+  <button type="button" data-dev-tab="analytics" onclick="switchDeveloperTab('analytics')">📈 Analytics</button>
+  <button type="button" data-dev-tab="stats" onclick="switchDeveloperTab('stats')">📊 إحصائيات</button>
+  <button type="button" data-dev-tab="news" onclick="switchDeveloperTab('news')">📰 الأخبار</button>
+  <button type="button" data-dev-tab="ads" onclick="switchDeveloperTab('ads')">💰 الإعلانات</button>
+  <button type="button" data-dev-tab="messages" onclick="switchDeveloperTab('messages')">📢 الرسائل</button>
+  <button type="button" data-dev-tab="features" onclick="switchDeveloperTab('features')">🎛️ الميزات</button>
+  <button type="button" data-dev-tab="users" onclick="switchDeveloperTab('users')">👥 المستخدمون</button>
+  <button type="button" data-dev-tab="banned" onclick="switchDeveloperTab('banned')">🚫 الأجهزة المحظورة</button>
+  <button type="button" data-dev-tab="settings" onclick="switchDeveloperTab('settings')">⚙️ الإعدادات</button>
+  <button type="button" data-dev-tab="appearance" onclick="switchDeveloperTab('appearance')">🎨 المظهر</button>
+  <button type="button" data-dev-tab="audit" onclick="switchDeveloperTab('audit')">📜 السجل</button>
+  <button type="button" data-dev-tab="tools" onclick="switchDeveloperTab('tools')">🧰 الأدوات</button>
+  <button type="button" data-dev-tab="webhooks" onclick="switchDeveloperTab('webhooks')">🔔 Webhooks</button>
+  <button type="button" data-dev-tab="backup" onclick="switchDeveloperTab('backup')">💾 النسخ الاحتياطي</button>
+</nav>
 
       <div data-dev-panel="overview">
         <div class="developer-stats">
@@ -451,7 +460,46 @@
             <label for="developerEventTitle">العنوان</label><input id="developerEventTitle" type="text" maxlength="80" required />
             <label for="developerEventDescription">نص الخبر</label><textarea id="developerEventDescription" rows="5" maxlength="3000"></textarea>
             <label for="developerEventLink">رابط التفاصيل (اختياري)</label><input id="developerEventLink" type="url" placeholder="https://" />
-            <label for="developerEventImage">رابط الصورة (اختياري)</label><input id="developerEventImage" type="url" placeholder="https://" oninput="previewContentImage('news')" />
+           <label>صورة الخبر (اختياري)</label>
+
+<!-- أزرار الرفع والرابط -->
+<div class="image-source-toggle" style="display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap;">
+  <label class="image-upload-label" style="flex: 1; min-width: 140px; padding: 12px; background: rgba(212, 175, 55, 0.1); border: 1.5px dashed rgba(212, 175, 55, 0.4); border-radius: 12px; text-align: center; cursor: pointer; color: var(--gold); font-weight: 700; font-size: 0.85rem; transition: all 0.25s ease;">
+    📁 رفع صورة من الجهاز
+    <input
+      type="file"
+      id="developerEventImageFile"
+      accept="image/*"
+      onchange="handleNewsImageUpload(event)"
+      style="display: none;"
+    />
+  </label>
+</div>
+
+<!-- حقل الرابط -->
+<label for="developerEventImage" style="font-size: 0.8rem;">أو الصق رابط الصورة</label>
+<input
+  id="developerEventImage"
+  type="url"
+  placeholder="https://example.com/image.jpg"
+  oninput="previewContentImage('news')"
+/>
+
+<!-- معاينة الصورة -->
+<img id="developerImagePreview" class="developer-preview" alt="معاينة الصورة" />
+
+<!-- معلومات الصورة -->
+<div id="developerEventImageInfo" style="font-size: 0.75rem; color: rgba(245, 241, 232, 0.6); margin-top: 6px; text-align: center;"></div>
+
+<!-- زر إزالة الصورة -->
+<button
+  type="button"
+  id="developerEventImageRemove"
+  onclick="removeNewsImage()"
+  style="display: none; margin-top: 8px; padding: 6px 14px; background: rgba(192, 57, 43, 0.15); border: 1px solid rgba(192, 57, 43, 0.4); border-radius: 8px; color: #ff8a7a; cursor: pointer; font-size: 0.8rem; font-family: inherit;"
+>
+  🗑️ إزالة الصورة
+</button>
             <div class="developer-field-row">
               <label>الفئة</label>
               <select id="developerEventCategory">
@@ -613,19 +661,55 @@
         </div>
       </div>
 
-      <div class="developer-panel hidden" data-dev-panel="users">
-        <h2>إدارة المستخدمين (Firebase)</h2>
-        <p class="field-help">يتم جلب المستخدمين مباشرة من Firebase. الإيقاف يمنع الدخول لكن لا يحذف الحساب.</p>
-        <div class="filter-bar">
-          <input id="developerUsersSearch" type="search" placeholder="الاسم أو البريد..." oninput="renderRegisteredUsers()" />
-          <select id="developerUsersStatus" onchange="renderRegisteredUsers()">
-            <option value="all">الجميع</option>
-            <option value="active">نشط</option>
-            <option value="disabled">موقوف</option>
-            <option value="banned">محظور</option>
-          </select>
+          <!-- ===== إدارة المستخدمين v2 ===== -->
+      <div class="developer-panel hidden admin-users-panel" data-dev-panel="users">
+        <div class="admin-users-header">
+          <div class="admin-users-header-title">
+            <div class="admin-users-icon">👥</div>
+            <div>
+              <h2>إدارة المستخدمين</h2>
+              <p>بحث · تعديل · إشعارات · حظر · استعادة</p>
+            </div>
+          </div>
+          <div class="admin-users-count" id="adminUsersCount">0 مستخدم</div>
         </div>
-        <div id="developerUsersList" class="developer-list"></div>
+
+        <div class="admin-users-toolbar">
+          <div class="admin-users-search">
+            <input
+              type="search"
+              id="adminUsersSearchInput"
+              placeholder="ابحث بالاسم أو اليوزر أو الإيميل أو UID..."
+              oninput="AdminUsers.debouncedSearch(this.value)"
+            />
+            <span class="admin-users-search-icon">🔍</span>
+          </div>
+
+          <select class="admin-users-filter" id="adminUsersStatusFilter" onchange="AdminUsers.applyFilters()">
+            <option value="all">جميع الحالات</option>
+            <option value="active">✅ نشط</option>
+            <option value="disabled">⛔ موقوف</option>
+            <option value="banned">🚫 محظور</option>
+            <option value="online">🟢 متصل الآن</option>
+            <option value="recent">🕐 آخر 24 ساعة</option>
+          </select>
+
+          <select class="admin-users-filter" id="adminUsersSortFilter" onchange="AdminUsers.applyFilters()">
+            <option value="recent">الأحدث نشاطاً</option>
+            <option value="created">الأحدث تسجيلاً</option>
+            <option value="name">الاسم (أ-ي)</option>
+            <option value="username">اليوزر (a-z)</option>
+          </select>
+
+          <button class="admin-users-refresh" onclick="AdminUsers.refresh()" title="تحديث">🔄</button>
+        </div>
+
+        <div class="admin-users-grid" id="adminUsersGrid">
+          <div class="admin-users-loading">
+            <div class="admin-users-spinner"></div>
+            <div>جارٍ التحميل...</div>
+          </div>
+        </div>
       </div>
 
       <div class="developer-panel hidden" data-dev-panel="banned">
@@ -706,9 +790,37 @@
         </form>
       </div>
 
-      <div class="developer-panel hidden" data-dev-panel="tools">
-        <h2>🧰 أدوات المطور</h2>
-        <p class="field-help">أدوات متقدمة للفحص والتحسين والصيانة والمزامنة.</p>
+            <div class="developer-panel hidden admin-console-panel" data-dev-panel="tools">
+        <div class="admin-analytics-header">
+          <div>
+            <h2>🧪 Console لايف</h2>
+            <p>نفّذ أوامر JavaScript مباشرة (يُستخدم للفحص والتطوير)</p>
+          </div>
+        </div>
+
+        <div class="admin-console-output" id="adminConsoleOutput">
+          <div class="admin-console-line info">💡 اكتب أمراً واضغط Enter</div>
+          <div class="admin-console-line info">أمثلة:</div>
+          <div class="admin-console-line info">  • document.title</div>
+          <div class="admin-console-line info">  • window.authApi.getCurrentUser()</div>
+          <div class="admin-console-line info">  • await window.firebaseHelpers.fbGetCollection('users')</div>
+        </div>
+
+        <div class="admin-console-input-wrapper">
+          <div class="admin-console-prompt">$</div>
+          <input
+            type="text"
+            class="admin-console-input"
+            id="adminConsoleInput"
+            placeholder="اكتب أمر JavaScript..."
+            autocomplete="off"
+            spellcheck="false"
+          />
+          <button class="admin-console-run" onclick="AdminTools.runConsoleCommand()">تشغيل</button>
+          <button class="admin-console-run" onclick="AdminTools.clearConsole()" style="background: rgba(192, 57, 43, 0.3); color: #ff8a7a;">مسح</button>
+        </div>
+
+        <h3 style="margin-top: 24px; color: #d4af37; font-size: 0.95rem;">🧰 أدوات سريعة</h3>
         <div class="dev-tools-grid" id="devToolsGrid"></div>
       </div>
 
@@ -718,6 +830,100 @@
         <div class="form-actions">
           <button class="developer-primary-btn" onclick="exportDeveloperData()">📥 تصدير JSON</button>
           <button class="auth-action-btn" onclick="resetDismissedAds()">🔄 إعادة إظهار الإعلانات المخفية</button>
+        </div>
+      </div>
+            <!-- ===== 📈 Analytics ===== -->
+      <div class="developer-panel hidden admin-analytics-panel" data-dev-panel="analytics">
+        <div class="admin-analytics-header">
+          <div>
+            <h2>📈 Analytics متقدم</h2>
+            <p>إحصائيات حية ورسوم بيانية</p>
+          </div>
+          <div class="admin-analytics-range">
+            <button class="admin-range-btn" data-range="24h" onclick="AdminAnalytics.setRange('24h')">24 ساعة</button>
+            <button class="admin-range-btn active" data-range="7d" onclick="AdminAnalytics.setRange('7d')">7 أيام</button>
+            <button class="admin-range-btn" data-range="30d" onclick="AdminAnalytics.setRange('30d')">30 يوم</button>
+            <button class="admin-range-btn" data-range="all" onclick="AdminAnalytics.setRange('all')">الكل</button>
+          </div>
+        </div>
+
+        <div id="adminAnalyticsContent">
+          <div class="admin-users-loading">
+            <div class="admin-users-spinner"></div>
+            <div>جارٍ التحميل...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 🎨 Appearance ===== -->
+      <div class="developer-panel hidden admin-appearance-panel" data-dev-panel="appearance">
+        <div class="admin-appearance-header">
+          <h2>🎨 التحكم بالمظهر</h2>
+          <p style="margin: 4px 0 0; color: rgba(245, 241, 232, 0.6); font-size: 0.8rem;">
+            تغيير ألوان الموقع فوراً — يظهر لجميع الزوار
+          </p>
+        </div>
+        <div id="adminAppearanceContent"></div>
+      </div>
+
+      <!-- ===== 📜 Audit Log ===== -->
+      <div class="developer-panel hidden admin-audit-panel" data-dev-panel="audit">
+        <div class="admin-audit-header">
+          <div>
+            <h2>📜 سجل الإجراءات</h2>
+            <p style="margin: 4px 0 0; color: rgba(245, 241, 232, 0.6); font-size: 0.8rem;">
+              كل إجراءات المطور على النظام
+            </p>
+          </div>
+          <div class="admin-users-count" id="adminAuditCount">0 إجراء</div>
+        </div>
+
+        <div class="admin-audit-filters">
+          <div class="admin-audit-search">
+            <input
+              type="search"
+              placeholder="ابحث في السجل..."
+              oninput="AdminAuditLog.debouncedSearch(this.value)"
+            />
+            <span class="admin-audit-search-icon">🔍</span>
+          </div>
+
+          <select class="admin-users-filter" id="adminAuditTypeFilter" onchange="AdminAuditLog.applyFilters()">
+            <option value="all">كل الإجراءات</option>
+            <option value="ban">🚫 حظر</option>
+            <option value="unban">✅ فك حظر</option>
+            <option value="toggle_disable">⛔ إيقاف/تفعيل</option>
+            <option value="delete_user">🗑️ حذف مستخدم</option>
+            <option value="send_notification">📢 إشعار</option>
+            <option value="create_news">📰 نشر خبر</option>
+            <option value="create_ad">💰 إنشاء إعلان</option>
+            <option value="update_settings">⚙️ إعدادات</option>
+          </select>
+
+          <button class="admin-users-refresh" onclick="AdminAuditLog.loadLogs()" title="تحديث">🔄</button>
+          <button class="admin-users-refresh" onclick="AdminAuditLog.exportLogs()" title="تصدير">📥</button>
+          <button class="admin-users-refresh" onclick="AdminAuditLog.clearLogs()" title="مسح الكل" style="color: #ff8a7a;">🗑️</button>
+        </div>
+
+        <div id="adminAuditContent"></div>
+      </div>
+
+            <!-- ===== 🔔 Webhooks ===== -->
+      <div class="developer-panel hidden admin-webhooks-panel" data-dev-panel="webhooks">
+        <div class="admin-analytics-header">
+          <div>
+            <h2>🔔 Webhooks</h2>
+            <p>ربط الموقع بأنظمة خارجية (Slack, Discord, Zapier)</p>
+          </div>
+          <button class="admin-action-btn" onclick="AdminTools.addWebhook()" style="flex: 0 0 auto;">
+            ➕ إضافة Webhook
+          </button>
+        </div>
+        <div id="adminWebhooksContent">
+          <div class="admin-users-loading">
+            <div class="admin-users-spinner"></div>
+            <div>جارٍ التحميل...</div>
+          </div>
         </div>
       </div>
     </section>
@@ -1356,6 +1562,8 @@
         </div>
 
       </div>
+            <!-- سجل الاستخارات -->
+      <div class="istikhara-history-container" id="istikharaHistoryContainer"></div>
     </section>
 
     <!-- ===== الإحصائيات ===== -->
@@ -1597,47 +1805,52 @@
     <audio id="audioElement" preload="metadata"></audio>
   </div>
 
-  <!-- ===== نافذة المحادثة العائمة — v2.1 ===== -->
-  <div class="chat-window" id="chatWindow">
-    <div class="chat-window-header">
-      <div class="friend-avatar" id="chatWindowAvatar" style="width: 40px; height: 40px; font-size: 0.95rem;" onclick="event.stopPropagation()"></div>
-      <div class="chat-window-title" onclick="minimizeChat()">
-        <div class="chat-window-name" id="chatWindowName">محادثة</div>
-        <div class="chat-window-status" id="chatWindowStatus">—</div>
-      </div>
-      <div class="chat-window-actions" onclick="event.stopPropagation()">
-        <button class="chat-window-btn" onclick="showChatMenu(event)" title="خيارات">⋯</button>
-        <button class="chat-window-btn" onclick="minimizeChat()" title="تصغير">—</button>
-        <button class="chat-window-btn close" onclick="closeChat()" title="إغلاق">✕</button>
-      </div>
+ <!-- ===== نافذة الدردشة العائمة — v2.0 ===== -->
+<div class="chat-float-window" id="chatFloatWindow">
+  <div class="chat-float-header" id="chatFloatHeader">
+    <div class="chat-float-avatar" id="chatFloatAvatar">؟</div>
+    <div class="chat-float-info">
+      <div class="chat-float-name" id="chatFloatName">محادثة</div>
+      <div class="chat-float-substatus" id="chatFloatSubstatus">--</div>
     </div>
-
-    <div class="chat-window-body" id="chatWindowBody">
-      <div class="friends-empty" style="border: none; background: transparent;">
-        <span class="friends-empty-icon">👋</span>
-        جارٍ التحميل...
-      </div>
-      <button class="chat-scroll-bottom" id="chatScrollBottom" onclick="document.getElementById('chatWindowBody').scrollTop = 999999" aria-label="أسفل">↓</button>
-    </div>
-
-    <div class="chat-window-footer">
-      <div class="chat-input-wrap">
-        <textarea
-          id="chatInput"
-          class="chat-input"
-          placeholder="اكتب رسالة..."
-          rows="1"
-          oninput="autoResizeChatInput()"
-          onkeydown="handleChatInputKeydown(event)"
-        ></textarea>
-      </div>
-      <button class="chat-send-btn" id="chatSendBtn" onclick="sendChatMessage()" aria-label="إرسال">
-        <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
-          <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
-        </svg>
-      </button>
+    <div class="chat-float-actions">
+      <button class="chat-float-btn" id="chatFloatMinimize" title="تصغير">─</button>
+      <button class="chat-float-btn close" id="chatFloatClose" title="إغلاق">✕</button>
     </div>
   </div>
+
+  <div class="chat-float-body" id="chatFloatBody">
+    <div class="chat-float-empty">
+      <span class="chat-float-empty-icon">💬</span>
+      جارٍ التحميل...
+    </div>
+  </div>
+
+  <div class="chat-float-footer">
+    <button class="chat-float-emoji-btn" id="chatFloatEmojiBtn" title="إيموجي" data-emoji-trigger="1">
+      😀
+    </button>
+    <div class="chat-float-input-wrap">
+      <textarea
+        id="chatFloatInput"
+        class="chat-float-input"
+        placeholder="اكتب رسالة..."
+        rows="1"
+      ></textarea>
+    </div>
+    <button class="chat-float-send" id="chatFloatSend" aria-label="إرسال">
+      <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<!-- زر التشغيل (يظهر عند إغلاق النافذة) -->
+<button class="chat-float-launcher" id="chatFloatLauncher" title="الدردشة">
+  💬
+  <span class="chat-float-launcher-badge" id="chatFloatLauncherBadge" style="display: none;"></span>
+</button>
 
   <!-- ===== Modal التفسير ===== -->
   <div id="tafsirModal" class="tafsir-modal">
@@ -1912,6 +2125,256 @@
         </div>
 
         <button type="submit" class="auth-submit-btn">حفظ التغييرات</button>
+        <div class="notif-settings-panel" id="notifSettingsPanel">
+  <div class="notif-settings-header">
+    <div class="notif-settings-icon">🔔</div>
+    <div>
+      <h3>إعدادات الإشعارات</h3>
+      <p class="notif-setting-desc">تحكم كامل في الإشعارات</p>
+    </div>
+  </div>
+
+  <!-- Quiet Hours -->
+  <div class="notif-settings-group">
+    <div class="notif-settings-group-title">
+      <span>🌙</span>
+      <span>ساعات الهدوء</span>
+    </div>
+
+    <div class="notif-setting-row">
+      <div class="notif-setting-label">
+        تفعيل ساعات الهدوء
+        <span class="notif-setting-desc">لا إشعارات صوتية خلال هذه الفترة</span>
+      </div>
+      <label class="notif-switch">
+        <input type="checkbox" id="notifQuietEnabled" onchange="handleNotifSettingChange('quietHoursEnabled', this.checked)">
+        <span class="notif-switch-slider"></span>
+      </label>
+    </div>
+
+    <div class="notif-time-row" id="notifQuietTimeRow">
+      <div class="notif-time-field">
+        <label>من</label>
+        <input type="time" id="notifQuietStart" class="notif-time-input" value="23:00" onchange="handleNotifSettingChange('quietHoursStart', this.value)">
+      </div>
+      <div class="notif-time-field">
+        <label>إلى</label>
+        <input type="time" id="notifQuietEnd" class="notif-time-input" value="05:00" onchange="handleNotifSettingChange('quietHoursEnd', this.value)">
+      </div>
+    </div>
+  </div>
+
+  <!-- الأصوات -->
+  <div class="notif-settings-group">
+    <div class="notif-settings-group-title">
+      <span>🔊</span>
+      <span>الأصوات والاهتزاز</span>
+    </div>
+
+    <div class="notif-setting-row">
+      <div class="notif-setting-label">تفعيل الصوت</div>
+      <label class="notif-switch">
+        <input type="checkbox" id="notifSoundEnabled" onchange="handleNotifSettingChange('soundEnabled', this.checked)">
+        <span class="notif-switch-slider"></span>
+      </label>
+    </div>
+
+    <div class="notif-setting-row">
+      <div class="notif-setting-label">تفعيل الاهتزاز</div>
+      <label class="notif-switch">
+        <input type="checkbox" id="notifVibrationEnabled" onchange="handleNotifSettingChange('vibrationEnabled', this.checked)">
+        <span class="notif-switch-slider"></span>
+      </label>
+    </div>
+
+    <div class="notif-setting-row">
+      <div class="notif-setting-label">صوت للرسائل</div>
+      <label class="notif-switch">
+        <input type="checkbox" id="notifSoundMessages" onchange="handleNotifSettingChange('soundForMessages', this.checked)">
+        <span class="notif-switch-slider"></span>
+      </label>
+    </div>
+
+    <div class="notif-setting-row">
+      <div class="notif-setting-label">صوت للطلبات</div>
+      <label class="notif-switch">
+        <input type="checkbox" id="notifSoundRequests" onchange="handleNotifSettingChange('soundForRequests', this.checked)">
+        <span class="notif-switch-slider"></span>
+      </label>
+    </div>
+
+    <div class="notif-setting-row">
+      <div class="notif-setting-label">صوت للتفاعلات</div>
+      <label class="notif-switch">
+        <input type="checkbox" id="notifSoundInteractions" onchange="handleNotifSettingChange('soundForInteractions', this.checked)">
+        <span class="notif-switch-slider"></span>
+      </label>
+    </div>
+  </div>
+
+  <!-- الإحصائيات -->
+  <div class="notif-settings-group">
+    <div class="notif-settings-group-title">
+      <span>📊</span>
+      <span>إحصائيات الإشعارات</span>
+    </div>
+
+    <div class="notif-stats-grid">
+      <div class="notif-stat-card">
+        <span class="notif-stat-value" id="notifStatToday">0</span>
+        <span class="notif-stat-label">اليوم</span>
+      </div>
+      <div class="notif-stat-card">
+        <span class="notif-stat-value" id="notifStatMuted">0</span>
+        <span class="notif-stat-label">مكتومة</span>
+      </div>
+      <div class="notif-stat-card">
+        <span class="notif-stat-value" id="notifStatTotal">0</span>
+        <span class="notif-stat-label">الإجمالي</span>
+      </div>
+    </div>
+
+    <button class="notif-reset-btn" onclick="resetNotifStats()">
+      🗑️ إعادة تعيين الإحصائيات
+    </button>
+  </div>
+
+  <!-- زر الاختبار -->
+  <button class="notif-reset-btn" onclick="testNotifSettings()" style="background: rgba(46, 139, 87, 0.15); border-color: rgba(46, 139, 87, 0.4); color: #7fe8a8;">
+    🧪 اختبار الإشعارات
+  </button>
+</div>
+
+<script>
+/* ============================================
+   إعدادات الإشعارات — التفاعلات
+   ============================================ */
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    renderNotifSettings();
+  }, 1500);
+});
+
+function renderNotifSettings() {
+  if (!window.NotificationSettings) return;
+
+  const s = window.NotificationSettings.load();
+
+  const setChecked = (id, value) => {
+    const el = document.getElementById(id);
+    if (el) el.checked = !!value;
+  };
+  const setValue = (id, value) => {
+    const el = document.getElementById(id);
+    if (el) el.value = value;
+  };
+
+  setChecked('notifQuietEnabled', s.quietHoursEnabled);
+  setValue('notifQuietStart', s.quietHoursStart);
+  setValue('notifQuietEnd', s.quietHoursEnd);
+  setChecked('notifSoundEnabled', s.soundEnabled);
+  setChecked('notifVibrationEnabled', s.vibrationEnabled);
+  setChecked('notifSoundMessages', s.soundForMessages);
+  setChecked('notifSoundRequests', s.soundForRequests);
+  setChecked('notifSoundInteractions', s.soundForInteractions);
+
+  updateNotifStats();
+  updateQuietTimeVisibility();
+}
+
+function updateQuietTimeVisibility() {
+  const s = window.NotificationSettings?.load();
+  const row = document.getElementById('notifQuietTimeRow');
+  if (row && s) {
+    row.style.display = s.quietHoursEnabled ? 'flex' : 'none';
+  }
+}
+
+function updateNotifStats() {
+  if (!window.NotificationSettings) return;
+  const stats = window.NotificationSettings.getStats();
+
+  const set = (id, value) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+  };
+  set('notifStatToday', stats.today || 0);
+  set('notifStatMuted', stats.todayMuted || 0);
+  set('notifStatTotal', stats.total || 0);
+}
+
+function handleNotifSettingChange(key, value) {
+  if (!window.NotificationSettings) return;
+
+  window.NotificationSettings.updateSetting(key, value);
+  console.log(`⚙️ ${key} = ${value}`);
+
+  if (key === 'quietHoursEnabled') {
+    updateQuietTimeVisibility();
+  }
+
+  if (typeof showToast === 'function') {
+    showToast('✅ تم الحفظ');
+  }
+}
+
+function resetNotifStats() {
+  if (!window.NotificationSettings) return;
+  if (!confirm('إعادة تعيين إحصائيات الإشعارات؟')) return;
+
+  window.NotificationSettings.resetStats();
+  updateNotifStats();
+  if (typeof showToast === 'function') showToast('✅ تمت الإعادة');
+}
+
+async function testNotifSettings() {
+  if (!window.NotificationManager) return;
+
+  // اختبار 1: إشعار عادي
+  window.NotificationManager.show({
+    title: '📢 اختبار 1 — عادي',
+    body: 'هذا إشعار عادي (low priority)',
+    type: 'general'
+  });
+
+  // اختبار 2: إشعار متوسط
+  setTimeout(() => {
+    window.NotificationManager.show({
+      title: '💬 اختبار 2 — متوسط',
+      body: 'رسالة محادثة (high priority)',
+      type: 'chat_message',
+      chatId: 'test_' + Date.now(),
+      icon: '💬'
+    });
+  }, 1500);
+
+  // اختبار 3: طلب صداقة
+  setTimeout(() => {
+    window.NotificationManager.show({
+      title: '👥 اختبار 3 — طلب صداقة',
+      body: 'يخترق Quiet Hours',
+      type: 'friend_request',
+      icon: '👥'
+    });
+  }, 3000);
+
+  // تحديث الإحصائيات
+  setTimeout(updateNotifStats, 4500);
+}
+
+// ✅ كشف حالة Quiet Hours في الوقت الحقيقي
+setInterval(() => {
+  if (!window.NotificationSettings) return;
+  const isQuiet = window.NotificationSettings.isQuietTime();
+  const statusEl = document.getElementById('notifQuietStatus');
+  if (statusEl) {
+    statusEl.textContent = isQuiet ? '🌙 الوقت الحالي ضمن ساعات الهدوء' : '☀️ الإشعارات نشطة';
+    statusEl.style.color = isQuiet ? '#9ec5ff' : '#7fe8a8';
+  }
+}, 30000);
+
+console.log('✅ Notification Settings UI loaded');
+</script>
 
         <div class="profile-stats-section">
           <div class="profile-stats-header">
@@ -2015,19 +2478,35 @@
   <script src="js/sync.js?v=1.0.0"></script>
   <script src="js/features.js?v=3.0.0"></script>
   <script src="js/home.js?v=2.2.0"></script>
-  <script src="js/security.js"></script>
+   <script src="js/security.js"></script>
+  
+  <!-- ✅ الأدوات الإدارية (يجب أن تُحمَّل قبل developer.js) -->
+  <script src="js/admin-users.js?v=1.0.0"></script>
+  <script src="js/admin-analytics.js?v=1.0.0"></script>
+  <script src="js/admin-audit-log.js?v=1.0.0"></script>
+  <script src="js/admin-appearance.js?v=1.0.0"></script>
+  <script src="js/admin-tools.js?v=1.0.0"></script>
+  
+  <!-- ✅ developer.js آخراً (يستخدم الأدوات أعلاه) -->
   <script src="js/developer.js?v=6.0.0"></script>
-  <script src="js/qibla.js?v=3.0.0"></script>
+  
+  <script src="js/qibla.js?v=3.0.0"></script>>
   <script src="js/names.js?v=2.0.0"></script>
   <script src="js/auth.js?v=6.0.0"></script>
+  <script src="js/presence.js?v=1.0.0"></script>
   <script src="js/quran.js?v=2.0.0"></script>
   <script src="js/listen.js?v=4.0.0"></script>
   <script src="js/share.js"></script>
   <script src="js/prayer.js"></script>
   <script src="js/ziyarat.js?v=1.2.0"></script>
-  <script src="js/istikhara.js?v=1.0.0"></script>
+  <script src="js/istikhara-v2.js?v=1.0.0"></script>
+  <script src="js/istikhara-history.js?v=1.0.0"></script>
   <script src="js/notifications.js?v=5.0.0"></script>
   <script src="js/friends.js?v=3.0.0"></script>
+  <script src="js/notification-settings.js?v=1.0.0"></script>
+  <script src="js/notification-manager.js?v=1.0.0"></script>
+  <script src="js/chat-emoji-picker.js?v=1.0.0"></script>
+  <script src="js/chat-window.js?v=1.0.0"></script>
   <script src="js/pwa.js?v=4.0.0"></script>
   <script src="js/indexeddb.js?v=1.0.0"></script>
   <script src="js/analytics.js?v=1.0.0"></script>

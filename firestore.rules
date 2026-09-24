@@ -3,115 +3,216 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    /* ============================================
+       دوال مساعدة
+       ============================================ */
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isAuthenticated() && request.auth.uid == uid;
+    }
+
     function isDeveloper() {
-      return request.auth != null
+      return isAuthenticated()
         && exists(/databases/$(database)/documents/settings/developer)
         && get(/databases/$(database)/documents/settings/developer).data.uid == request.auth.uid;
     }
 
-    function isOwner(uid) {
-      return request.auth != null && request.auth.uid == uid;
-    }
-
-    // settings (قراءة عامة، كتابة للمطور فقط)
+    /* ============================================
+       settings
+       ============================================ */
     match /settings/{docId} {
       allow read: if true;
-      allow write: if isDeveloper() || (request.auth != null && docId == 'devPassword' && request.resource.data.keys().hasOnly(['hash', 'updatedAt']));
+      allow write: if isDeveloper()
+        || (isAuthenticated() && docId == 'devPassword'
+            && request.resource.data.keys().hasOnly(['hash', 'updatedAt']));
     }
 
-    // users
+    /* ============================================
+       users
+       ============================================ */
     match /users/{uid} {
-      allow read: if request.auth != null;
-      allow create: if request.auth != null && request.auth.uid == uid;
-      allow update: if isOwner(uid) || isDeveloper();
-      allow delete: if isDeveloper();
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && request.auth.uid == uid;
+      allow update: if isOwner(uid) || isAuthenticated();
+      allow delete: if isAuthenticated();
     }
 
-    // userPrefs
+    /* ============================================
+       userPrefs
+       ============================================ */
     match /userPrefs/{uid} {
       allow read, write: if isOwner(uid);
     }
 
-    // fcmTokens
+    /* ============================================
+       notificationSettings
+       ============================================ */
+    match /notificationSettings/{uid} {
+      allow read: if isOwner(uid) || isAuthenticated();
+      allow create, update: if isOwner(uid);
+      allow delete: if isOwner(uid) || isAuthenticated();
+    }
+
+    /* ============================================
+       fcmTokens
+       ============================================ */
     match /fcmTokens/{uid} {
       allow read, write: if isOwner(uid);
     }
 
-    // pushQueue
-    match /pushQueue/{docId} {
-      allow read: if request.auth != null;
-      allow create: if request.auth != null;
-      allow update, delete: if isDeveloper();
+    /* ============================================
+       ntfyTopics
+       ============================================ */
+    match /ntfyTopics/{uid} {
+      allow read: if isAuthenticated();
+      allow create, update: if isOwner(uid);
+      allow delete: if isOwner(uid) || isAuthenticated();
     }
 
-    // news
+    /* ============================================
+       pushQueue
+       ============================================ */
+    match /pushQueue/{docId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update, delete: if isAuthenticated();
+    }
+
+    /* ============================================
+       news
+       ============================================ */
     match /news/{docId} {
       allow read: if true;
-      allow write: if isDeveloper();
+      allow create, update, delete: if isAuthenticated();
     }
 
-    // ads
+    /* ============================================
+       ads
+       ============================================ */
     match /ads/{docId} {
       allow read: if true;
-      allow write: if isDeveloper();
+      allow create, update, delete: if isAuthenticated();
     }
 
-    // messages
+    /* ============================================
+       messages
+       ============================================ */
     match /messages/{docId} {
       allow read: if true;
-      allow write: if isDeveloper();
+      allow create, update, delete: if isAuthenticated();
     }
 
-    // bannedDevices
+    /* ============================================
+       bannedDevices
+       ============================================ */
     match /bannedDevices/{docId} {
-      allow read: if request.auth != null;
-      allow write: if isDeveloper();
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAuthenticated();
     }
 
-    // friendships
+    /* ============================================
+       friendships
+       ============================================ */
     match /friendships/{docId} {
-      allow read: if request.auth != null;
-      allow create: if request.auth != null;
-      allow update, delete: if request.auth != null;
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAuthenticated();
     }
 
-    // chats
+    /* ============================================
+       chats
+       ============================================ */
     match /chats/{docId} {
-      allow read: if request.auth != null;
-      allow create: if request.auth != null;
-      allow update: if request.auth != null;
-      allow delete: if isDeveloper();
+      allow read, create, update, delete: if isAuthenticated();
     }
 
-    // chatMessages
+    /* ============================================
+       chatMessages
+       ============================================ */
     match /chatMessages/{docId} {
-      allow read: if request.auth != null;
-      allow create: if request.auth != null;
-      allow update, delete: if request.auth != null;
+      allow read, create, update, delete: if isAuthenticated();
     }
 
-    // typing
+    /* ============================================
+       typing
+       ============================================ */
     match /typing/{docId} {
-      allow read, write: if request.auth != null;
+      allow read, write: if isAuthenticated();
     }
 
-    // notifications
+    /* ============================================
+       notifications
+       ============================================ */
     match /notifications/{docId} {
-      allow read: if request.auth != null;
-      allow create: if request.auth != null;
-      allow update: if request.auth != null;
-      allow delete: if isDeveloper();
+      allow read, create, update, delete: if isAuthenticated();
     }
 
-    // userStatus
+    /* ============================================
+       userStatus
+       ============================================ */
     match /userStatus/{uid} {
-      allow read: if request.auth != null;
+      allow read: if isAuthenticated();
       allow write: if isOwner(uid);
     }
 
-    // analytics
+    /* ============================================
+       analytics
+       ============================================ */
     match /analytics/{uid} {
-      allow read, write: if isOwner(uid) || isDeveloper();
+      allow read, write: if isOwner(uid) || isAuthenticated();
+    }
+
+    /* ============================================
+       salahSessions
+       ============================================ */
+    match /salahSessions/{docId} {
+      allow read, create, update, delete: if isAuthenticated();
+    }
+
+    /* ============================================
+       developer
+       ============================================ */
+    match /developer/{docId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated();
+    }
+
+    /* ============================================
+       ✅ adminMessages — إشعارات إدارية
+       ============================================ */
+    match /adminMessages/{docId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update, delete: if isAuthenticated();
+    }
+
+    /* ============================================
+       ✅ adminLogs — سجل نشاطات المطور
+       ============================================ */
+    match /adminLogs/{docId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update, delete: if isAuthenticated();
+    }
+
+    /* ============================================
+       ✅ userActions — إجراءات على المستخدمين
+       ============================================ */
+    match /userActions/{docId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update, delete: if isAuthenticated();
+    }
+
+    /* ============================================
+       ✅ accountRecovery — استعادة الحسابات
+       ============================================ */
+    match /accountRecovery/{docId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update, delete: if isAuthenticated();
     }
   }
 }
